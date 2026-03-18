@@ -5,37 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 export default function MarketingHome() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Shield className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-slate-100">CIDR</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-slate-300 hover:text-slate-100" data-testid="nav-home">
-                Home
-              </Link>
-              <Link href="/products" className="text-slate-300 hover:text-slate-100" data-testid="nav-products">
-                Products
-              </Link>
-              <Link href="/pricing" className="text-slate-300 hover:text-slate-100" data-testid="nav-pricing">
-                Pricing
-              </Link>
-              <Link href="/about" className="text-slate-300 hover:text-slate-100" data-testid="nav-about">
-                About
-              </Link>
-              <Link href="/login">
-                <Button variant="default" size="sm" data-testid="nav-login">
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
 
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8">
@@ -47,7 +17,7 @@ export default function MarketingHome() {
           <h1 className="text-5xl md:text-6xl font-bold text-slate-100 mb-6">
             Intelligent Cloud Security
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-cyan-400">
               Operations Platform
             </span>
           </h1>
@@ -129,7 +99,7 @@ export default function MarketingHome() {
       {/* CTA Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <Card className="bg-gradient-to-r from-blue-900/30 to-cyan-900/30 border-blue-500/20">
+          <Card className="bg-linear-to-r from-blue-900/30 to-cyan-900/30 border-blue-500/20">
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl font-bold text-slate-100 mb-4">
                 Ready to Secure Your Cloud?

@@ -1,28 +1,12 @@
 import Link from 'next/link';
-import { Shield, ArrowLeft, Users, Target, Heart } from 'lucide-react';
+import { Users, Target, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <Shield className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-slate-100">CIDR</span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" size="sm" data-testid="back-home">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
+      
 
       {/* About Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
@@ -55,7 +39,7 @@ export default function AboutPage() {
               <Card className="bg-slate-900/50 border-slate-800">
                 <CardContent className="p-8 text-center">
                   <div className="h-16 w-16 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-4">
-                    <Shield className="h-8 w-8 text-blue-400" />
+                    <Target className="h-8 w-8 text-blue-400" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-100 mb-3">Security First</h3>
                   <p className="text-slate-400">

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export function Sidebar() {
     return (
-        <div className="fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 hidden lg:block">
+        <div className="fixed inset-y-0 left-0 z-50 hidden w-64 flex-col border-r border-slate-800 bg-slate-900 lg:flex">
             <div className="flex h-16 shrink-0 items-center px-6 border-b border-slate-800">
                 <span className="text-xl font-bold text-slate-100">CIDR Dashboard</span>
             </div>
@@ -24,6 +24,15 @@ export function Sidebar() {
                         Workflows
                     </Link>
                 </nav>
+
+                <div className="border-t border-slate-800 px-4 py-4">
+                    <Link href="/settings" className="mb-2 block rounded-md px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-white">
+                        Settings
+                    </Link>
+                    <Link href="/login" className="block rounded-md px-3 py-2 text-sm font-medium text-red-300 transition-colors hover:bg-slate-800 hover:text-red-200">
+                        Logout
+                    </Link>
+                </div>
             </div>
         </div>
     );

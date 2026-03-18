@@ -1,28 +1,12 @@
 import Link from 'next/link';
-import { Shield, ArrowLeft, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PricingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <Shield className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-slate-100">CIDR</span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" size="sm" data-testid="back-home">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
+      
 
       {/* Pricing Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
@@ -77,7 +61,7 @@ export default function PricingPage() {
             </Card>
 
             {/* Professional Plan */}
-            <Card className="bg-gradient-to-b from-blue-900/30 to-cyan-900/30 border-blue-500/50 relative">
+            <Card className="bg-linear-to-b from-blue-900/30 to-cyan-900/30 border-blue-500/50 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                   POPULAR

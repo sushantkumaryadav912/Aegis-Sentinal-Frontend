@@ -1,28 +1,12 @@
 import Link from 'next/link';
-import { Shield, ArrowLeft, Cloud, Database, Network, Lock } from 'lucide-react';
+import { Cloud, Database, Network, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function ProductsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Navbar */}
-      <nav className="border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <Shield className="h-8 w-8 text-blue-500" />
-              <span className="ml-2 text-xl font-bold text-slate-100">CIDR</span>
-            </Link>
-            <Link href="/">
-              <Button variant="ghost" size="sm" data-testid="back-home">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Home
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
+      
 
       {/* Products Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
