@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getAlertById, getWorkflowsForAlert } from '@/lib/mock-data';
 import { simulateDelay, formatTimestamp, cn } from '@/lib/utils';
-import { Alert, Workflow } from '@/lib/types';
+import { AlertStatus } from '@/lib/types';
+import { useAlertById } from '@/hooks/useAlerts';
+import { useWorkflows } from '@/hooks/useWorkflows';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +25,6 @@ import {
   Shield,
   Cloud,
   Server,
-  Clock,
   AlertTriangle,
   CheckCircle2,
   Zap,
@@ -40,50 +40,90 @@ export default function AlertDetailPage() {
   const router = useRouter();
   const alertId = params.id as string;
 
-  const [loading, setLoading] = useState(true);
-  const [alert, setAlert] = useState<Alert | null>(null);
-  const [workflows, setWorkflows] = useState<Workflow[]>([]);
+  const {
+    data: alertData,
+    isLoading: isAlertLoading,
+    isError: isAlertError,
+    error: alertError,
+    refetch: refetchAlert,
+  } = useAlertById(alertId);
+  const {
+    data: workflowsData,
+    isLoading: isWorkflowsLoading,
+    refetch: refetchWorkflows,
+  } = useWorkflows({
+    alertId,
+    page: 1,
+    limit: 20,
+  });
+
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, AlertStatus>>({});
   const [remediationDialogOpen, setRemediationDialogOpen] = useState(false);
   const [remediationLoading, setRemediationLoading] = useState(false);
   const [statusChangeLoading, setStatusChangeLoading] = useState(false);
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await simulateDelay(500);
-      const foundAlert = getAlertById(alertId);
-      if (foundAlert) {
-        setAlert(foundAlert);
-        const relatedWorkflows = getWorkflowsForAlert(alertId);
-        setWorkflows(relatedWorkflows);
-      }
-      setLoading(false);
-    };
-    loadData();
-  }, [alertId]);
+  const optimisticStatus = statusOverrides[alertId];
+
+  const alert =
+    alertData && optimisticStatus
+      ? {
+          ...alertData,
+          status: optimisticStatus,
+        }
+      : alertData;
+  const workflows = workflowsData?.items ?? [];
 
   const handleRemediationAction = async () => {
     setRemediationLoading(true);
     await simulateDelay(2000);
     setRemediationLoading(false);
     setRemediationDialogOpen(false);
+    await refetchWorkflows();
     window.alert('Remediation workflow initiated successfully! Check the Related Workflows section below.');
   };
 
-  const handleStatusChange = async (newStatus: 'investigating' | 'resolved' | 'false_positive') => {
+  const handleStatusChange = async (newStatus: AlertStatus) => {
     if (!alert) return;
     setStatusChangeLoading(true);
     await simulateDelay(1000);
-    setAlert({ ...alert, status: newStatus });
+    setStatusOverrides((current) => ({
+      ...current,
+      [alertId]: newStatus,
+    }));
     setStatusChangeLoading(false);
   };
 
-  if (loading) {
+  if ((isAlertLoading && !alertData) || (isWorkflowsLoading && !workflowsData)) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-64" />
         <Skeleton className="h-48" />
+      </div>
+    );
+  }
+
+  if (isAlertError) {
+    return (
+      <div className="space-y-6" data-testid="alert-detail-error-state">
+        <Button variant="outline" onClick={() => router.push('/alerts')} data-testid="back-to-alerts">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Alerts
+        </Button>
+        <Card className="bg-slate-900/50 border-slate-800">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <AlertTriangle className="h-12 w-12 text-red-400 mb-4" />
+            <h2 className="text-xl font-semibold text-slate-100 mb-2">Unable to load alert</h2>
+            <p className="text-slate-400 text-center mb-4">
+              {alertError instanceof Error
+                ? alertError.message
+                : 'An unexpected error occurred while fetching this alert.'}
+            </p>
+            <Button variant="outline" onClick={() => refetchAlert()}>
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -99,7 +139,7 @@ export default function AlertDetailPage() {
           <CardContent className="flex flex-col items-center justify-center py-12">
             <AlertTriangle className="h-12 w-12 text-amber-400 mb-4" />
             <h2 className="text-xl font-semibold text-slate-100 mb-2">Alert Not Found</h2>
-            <p className="text-slate-400">The alert you're looking for doesn't exist.</p>
+            <p className="text-slate-400">The alert you&apos;re looking for doesn&apos;t exist.</p>
           </CardContent>
         </Card>
       </div>

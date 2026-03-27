@@ -1,159 +1,121 @@
-import Link from 'next/link';
-import { Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SectionWrapper } from '@/components/marketing/SectionWrapper';
+import { AnimatedContainer } from '@/components/marketing/AnimatedContainer';
+import { PricingCard } from '@/components/marketing/PricingCard';
+
+export const metadata = {
+  title: 'Pricing | CIDR Platform',
+  description: 'Transparent scaling for cloud security operations.',
+};
 
 export default function PricingPage() {
+  const tiers = [
+    {
+      name: "Starter",
+      price: "Free",
+      description: "Perfect for personal prototypes and evaluating the platform.",
+      features: [
+        "1 Cloud Account (AWS/GCP/Azure)",
+        "Up to 10,000 logs ingested per month",
+        "7 days log retention",
+        "Basic rule-based signatures",
+        "Community support"
+      ],
+      ctaText: "Get Started Free",
+      ctaHref: "/register",
+      isPopular: false
+    },
+    {
+      name: "Pro",
+      price: "₹49,999",
+      description: "Comprehensive security for growing cloud-native teams.",
+      features: [
+        "Up to 25 Cloud Accounts",
+        "10 Million logs ingested per month",
+        "90 days hot log retention",
+        "Full Python Isolation Forest ML Engine",
+        "Automated Playbooks & Webhooks",
+        "Priority Email & Slack Support",
+        "API Access for CI/CD"
+      ],
+      ctaText: "Start 14-Day Trial",
+      ctaHref: "/register",
+      isPopular: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      description: "For large organizations with complex compliance needs.",
+      features: [
+        "Unlimited Cloud Accounts",
+        "Custom Log Ingestion quotas",
+        "1-Year cold storage & compliance archives",
+        "Dedicated VPC deployment available",
+        "Custom Regex & ML Engine tuning",
+        "24/7 Dedicated Support Engineer",
+        "SLA 99.99% Uptime Guarantee"
+      ],
+      ctaText: "Contact Sales",
+      ctaHref: "/contact",
+      isPopular: false
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-slate-950 via-slate-900 to-slate-950">
+    <div className="flex flex-col min-h-screen">
       
-
-      {/* Pricing Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-100 mb-4">Simple, Transparent Pricing</h1>
-            <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-              Choose the plan that fits your organization's needs
+      {/* Header Section */}
+      <section className="relative pt-32 pb-16 overflow-hidden mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+        {/* Glow Effects */}
+        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-blue-900/10 blur-[100px] rounded-full pointer-events-none" />
+        
+        <div className="text-center relative z-10 max-w-3xl mx-auto">
+          <AnimatedContainer animation="fade-up">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-100 tracking-tight mb-6">
+              Simple, transparent pricing
+            </h1>
+            <p className="text-xl text-slate-400 font-light leading-relaxed">
+              No hidden fees. No surprise overages. Choose the plan that aligns with your cloud data gravity.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Starter Plan */}
-            <Card className="bg-slate-900/50 border-slate-800">
-              <CardHeader>
-                <CardTitle className="text-2xl">Starter</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-slate-100">$299</span>
-                  <span className="text-slate-400 ml-2">/month</span>
-                </div>
-                <p className="text-sm text-slate-400 mt-2">Perfect for small teams</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Up to 10 cloud accounts</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">1,000 alerts per month</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">30 days log retention</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Email support</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Basic automation</span>
-                  </li>
-                </ul>
-                <Link href="/login">
-                  <Button variant="outline" className="w-full" data-testid="pricing-starter">
-                    Get Started
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Professional Plan */}
-            <Card className="bg-linear-to-b from-blue-900/30 to-cyan-900/30 border-blue-500/50 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  POPULAR
-                </span>
-              </div>
-              <CardHeader>
-                <CardTitle className="text-2xl">Professional</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-slate-100">$899</span>
-                  <span className="text-slate-400 ml-2">/month</span>
-                </div>
-                <p className="text-sm text-slate-400 mt-2">For growing organizations</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Up to 50 cloud accounts</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">10,000 alerts per month</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">90 days log retention</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Priority support (24/7)</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Advanced automation</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Custom playbooks</span>
-                  </li>
-                </ul>
-                <Link href="/login">
-                  <Button className="w-full" data-testid="pricing-professional">
-                    Get Started
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            {/* Enterprise Plan */}
-            <Card className="bg-slate-900/50 border-slate-800">
-              <CardHeader>
-                <CardTitle className="text-2xl">Enterprise</CardTitle>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-slate-100">Custom</span>
-                </div>
-                <p className="text-sm text-slate-400 mt-2">For large enterprises</p>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Unlimited cloud accounts</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Unlimited alerts</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Custom log retention</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Dedicated support team</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">Custom integrations</span>
-                  </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-blue-400 mr-2 mt-0.5" />
-                    <span className="text-slate-300">SLA guarantees</span>
-                  </li>
-                </ul>
-                <Button variant="outline" className="w-full" data-testid="pricing-enterprise">
-                  Contact Sales
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
+          </AnimatedContainer>
         </div>
       </section>
+
+      {/* Pricing Cards */}
+      <SectionWrapper className="pt-0 border-none">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {tiers.map((tier, idx) => (
+             <AnimatedContainer key={idx} animation="fade-up" delay={0.1 * (idx + 1)}>
+               <PricingCard tier={tier} />
+             </AnimatedContainer>
+          ))}
+        </div>
+      </SectionWrapper>
+      
+      {/* FAQ Snippet */}
+      <SectionWrapper className="py-20 bg-slate-900/20 border-t border-slate-800/30">
+        <AnimatedContainer animation="fade-up" className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-slate-100 mb-8">Frequently Asked Questions</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+               <div>
+                  <h4 className="text-slate-100 font-semibold mb-2">How is log ingestion measured?</h4>
+                   <p className="text-slate-400 text-sm leading-relaxed">We calculate ingestion based on the sheer number of log events sent via our APIs or collectors, not data volume strictly, ensuring predictable billing.</p>
+               </div>
+               <div>
+                  <h4 className="text-slate-100 font-semibold mb-2">Can I cancel anytime?</h4>
+                   <p className="text-slate-400 text-sm leading-relaxed">Yes. We believe in providing value, not lock-in. You can transition back to the Starter tier or export your data at any billing cycle end.</p>
+               </div>
+               <div>
+                  <h4 className="text-slate-100 font-semibold mb-2">Do you offer on-premise deployments?</h4>
+                   <p className="text-slate-400 text-sm leading-relaxed">On-premise or managed VPC installations are strictly reserved for our Enterprise plan customers due to dedicated infrastructure setup requirements.</p>
+               </div>
+               <div>
+                  <h4 className="text-slate-100 font-semibold mb-2">Is the Python engine included in all plans?</h4>
+                   <p className="text-slate-400 text-sm leading-relaxed">The ML Isolation Forest detection engine is compute-heavy. It is only fully enabled in the Pro and Enterprise plans.</p>
+               </div>
+            </div>
+        </AnimatedContainer>
+      </SectionWrapper>
+
     </div>
   );
 }

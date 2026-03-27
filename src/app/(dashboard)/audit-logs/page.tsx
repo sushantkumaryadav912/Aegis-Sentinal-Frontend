@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { mockAuditLogs } from '@/lib/mock-data';
-import { simulateDelay, formatISOTimestamp } from '@/lib/utils';
-import { AuditLog, AuditResult } from '@/lib/types';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { formatISOTimestamp } from '@/lib/utils';
+import { AuditResult } from '@/lib/types';
+import { getAuditLogs } from '@/lib/api/dashboard';
 import {
   Table,
   TableBody,
@@ -16,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { TableSkeleton } from '@/components/layout/skeletons';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShieldAlert } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 50;
 
@@ -35,32 +36,61 @@ function ResultBadge({ result }: { result: AuditResult }) {
 }
 
 export default function AuditLogsPage() {
-  const [loading, setLoading] = useState(true);
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await simulateDelay(500);
-      setAuditLogs(mockAuditLogs);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+  const {
+    data: auditLogsData,
+    isLoading,
+    isError,
+    error,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['audit-logs', currentPage],
+    queryFn: () =>
+      getAuditLogs({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      }),
+    placeholderData: (previousData) => previousData,
+  });
 
-  const paginatedLogs = auditLogs.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const paginatedLogs = auditLogsData?.items ?? [];
+  const total = auditLogsData?.meta.total ?? 0;
+  const totalPages = auditLogsData?.meta.totalPages ?? 1;
+  const start = total === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const end = Math.min(currentPage * ITEMS_PER_PAGE, total);
 
-  const totalPages = Math.ceil(auditLogs.length / ITEMS_PER_PAGE);
-
-  if (loading) {
+  if (isLoading && !auditLogsData) {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 bg-slate-800 animate-pulse rounded" />
         <TableSkeleton rows={10} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6" data-testid="audit-logs-error-state">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-100 mb-2">Audit Logs</h1>
+          <p className="text-slate-400">Immutable record of all system activities for compliance</p>
+        </div>
+        <div className="border border-slate-800 rounded-lg p-6 text-center space-y-4">
+          <ShieldAlert className="h-10 w-10 text-red-400 mx-auto" />
+          <div>
+            <h2 className="text-lg font-semibold text-slate-100">Unable to load audit logs</h2>
+            <p className="text-sm text-slate-400 mt-1">
+              {error instanceof Error
+                ? error.message
+                : 'An unexpected error occurred while fetching audit logs.'}
+            </p>
+          </div>
+          <Button onClick={() => refetch()} variant="outline">
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
@@ -121,7 +151,8 @@ export default function AuditLogsPage() {
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-slate-400">
-          Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, auditLogs.length)} of {auditLogs.length} audit logs
+          Showing {start} to {end} of {total} audit logs
+          {isFetching ? ' (updating...)' : ''}
         </p>
         <div className="flex gap-2">
           <Button
@@ -138,7 +169,7 @@ export default function AuditLogsPage() {
             variant="outline"
             size="sm"
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-            disabled={currentPage === totalPages}
+            disabled={currentPage >= totalPages}
             data-testid="pagination-next"
           >
             Next

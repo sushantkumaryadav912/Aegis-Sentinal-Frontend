@@ -68,3 +68,15 @@ export interface DashboardMetrics {
   avg_risk_score: number;
   alerts_today: number;
 }
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  meta: PaginationMeta;
+}

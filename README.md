@@ -1,5 +1,18 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+Create a `.env` file (or copy `.env.example`) and set the backend URL:
+
+```bash
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
+```
+
+The login and signup pages send requests to:
+
+- `POST /auth/login`
+- `POST /auth/signup`
+
 ## Getting Started
 
 First, run the development server:

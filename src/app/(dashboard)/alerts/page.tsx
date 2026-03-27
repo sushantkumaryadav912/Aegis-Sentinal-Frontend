@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { mockAlerts } from '@/lib/mock-data';
-import { simulateDelay, formatTimestamp } from '@/lib/utils';
-import { Alert, Severity, AlertStatus, CloudProvider } from '@/lib/types';
+import { formatTimestamp } from '@/lib/utils';
+import { AlertStatus, Severity } from '@/lib/types';
+import { useAlerts } from '@/hooks/useAlerts';
 import {
   Table,
   TableBody,
@@ -23,52 +23,66 @@ import { AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 const ITEMS_PER_PAGE = 20;
 
 export default function AlertsPage() {
-  const [loading, setLoading] = useState(true);
-  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [severityFilter, setSeverityFilter] = useState<Severity | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<AlertStatus | 'all'>('all');
-  const [cloudFilter, setCloudFilter] = useState<CloudProvider | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  const {
+    data: alertsData,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    refetch,
+  } = useAlerts({
+    page: currentPage,
+    limit: ITEMS_PER_PAGE,
+    search: searchTerm || undefined,
+    severity: severityFilter === 'all' ? undefined : severityFilter,
+    status: statusFilter === 'all' ? undefined : statusFilter,
+  });
+
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      await simulateDelay(500);
-      // Sort by risk_score descending
-      const sorted = [...mockAlerts].sort((a, b) => b.risk_score - a.risk_score);
-      setAlerts(sorted);
-      setLoading(false);
-    };
-    loadData();
-  }, []);
+    setCurrentPage(1);
+  }, [severityFilter, statusFilter, searchTerm]);
 
-  const filteredAlerts = useMemo(() => {
-    return alerts.filter(alert => {
-      const matchesSeverity = severityFilter === 'all' || alert.severity === severityFilter;
-      const matchesStatus = statusFilter === 'all' || alert.status === statusFilter;
-      const matchesCloud = cloudFilter === 'all' || alert.cloud_provider === cloudFilter;
-      const matchesSearch = searchTerm === '' || 
-        alert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        alert.description.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesSeverity && matchesStatus && matchesCloud && matchesSearch;
-    });
-  }, [alerts, severityFilter, statusFilter, cloudFilter, searchTerm]);
+  const alerts = alertsData?.items ?? [];
+  const total = alertsData?.meta.total ?? 0;
+  const totalPages = alertsData?.meta.totalPages ?? 1;
+  const start = total === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const end = Math.min(currentPage * ITEMS_PER_PAGE, total);
 
-  const paginatedAlerts = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    return filteredAlerts.slice(start, end);
-  }, [filteredAlerts, currentPage]);
-
-  const totalPages = Math.ceil(filteredAlerts.length / ITEMS_PER_PAGE);
-
-  if (loading) {
+  if (isLoading && !alertsData) {
     return (
       <div className="space-y-6">
         <div className="h-10 w-48 bg-slate-800 animate-pulse rounded" />
         <TableSkeleton rows={10} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6" data-testid="alerts-error-state">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-100 mb-2">Security Alerts</h1>
+          <p className="text-slate-400">Monitor and manage security threats across your infrastructure</p>
+        </div>
+        <div className="border border-slate-800 rounded-lg p-6 text-center space-y-4">
+          <AlertTriangle className="h-10 w-10 text-red-400 mx-auto" />
+          <div>
+            <h2 className="text-lg font-semibold text-slate-100">Unable to load alerts</h2>
+            <p className="text-sm text-slate-400 mt-1">
+              {error instanceof Error
+                ? error.message
+                : 'An unexpected error occurred while fetching alerts.'}
+            </p>
+          </div>
+          <Button onClick={() => refetch()} variant="outline">
+            Retry
+          </Button>
+        </div>
       </div>
     );
   }
@@ -81,7 +95,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Input
           placeholder="Search alerts..."
           value={searchTerm}
@@ -91,6 +105,7 @@ export default function AlertsPage() {
         <select
           value={severityFilter}
           onChange={(e) => setSeverityFilter(e.target.value as Severity | 'all')}
+          aria-label="Filter by severity"
           className="h-10 rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           data-testid="severity-filter"
         >
@@ -103,6 +118,7 @@ export default function AlertsPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as AlertStatus | 'all')}
+          aria-label="Filter by status"
           className="h-10 rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           data-testid="status-filter"
         >
@@ -112,22 +128,10 @@ export default function AlertsPage() {
           <option value="resolved">Resolved</option>
           <option value="false_positive">False Positive</option>
         </select>
-        <select
-          value={cloudFilter}
-          onChange={(e) => setCloudFilter(e.target.value as CloudProvider | 'all')}
-          className="h-10 rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          data-testid="cloud-filter"
-        >
-          <option value="all">All Providers</option>
-          <option value="aws">AWS</option>
-          <option value="azure">Azure</option>
-          <option value="gcp">GCP</option>
-          <option value="multi-cloud">Multi-Cloud</option>
-        </select>
       </div>
 
       {/* Table */}
-      {paginatedAlerts.length === 0 ? (
+      {alerts.length === 0 ? (
         <EmptyState
           icon={AlertTriangle}
           title="No alerts found"
@@ -148,7 +152,7 @@ export default function AlertsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paginatedAlerts.map((alert) => (
+                {alerts.map((alert) => (
                   <TableRow key={alert.id} data-testid={`alert-row-${alert.id}`}>
                     <TableCell>
                       <Link
@@ -184,7 +188,8 @@ export default function AlertsPage() {
           {/* Pagination */}
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-400">
-              Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, filteredAlerts.length)} of {filteredAlerts.length} alerts
+              Showing {start} to {end} of {total} alerts
+              {isFetching ? ' (updating...)' : ''}
             </p>
             <div className="flex gap-2">
               <Button
@@ -201,7 +206,7 @@ export default function AlertsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
+                disabled={currentPage >= totalPages}
                 data-testid="pagination-next"
               >
                 Next

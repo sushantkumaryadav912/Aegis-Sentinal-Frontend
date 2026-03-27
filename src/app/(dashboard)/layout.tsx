@@ -1,12 +1,38 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
+import { getAccessToken, hasRefreshToken, isDummyAuthBypassEnabled } from '@/lib/auth-tokens';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const [canRender, setCanRender] = useState(false);
+
+  useEffect(() => {
+    const isAuthenticated =
+      Boolean(getAccessToken()) ||
+      hasRefreshToken() ||
+      isDummyAuthBypassEnabled();
+
+    if (!isAuthenticated) {
+      router.replace('/login');
+      return;
+    }
+
+    setCanRender(true);
+  }, [router]);
+
+  if (!canRender) {
+    return (
+      <div className="min-h-screen bg-slate-950" aria-busy="true" />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950">
       <Sidebar />
