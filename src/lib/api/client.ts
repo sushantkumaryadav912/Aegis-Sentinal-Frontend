@@ -190,21 +190,15 @@ async function refreshAccessToken(): Promise<boolean> {
   const refreshToken = getRefreshToken();
   const usingDummyBypass = isDummyAuthBypassEnabled();
 
-  if (!refreshToken) {
-    if (!usingDummyBypass) {
-      clearAuthTokens();
-    }
-    return false;
-  }
-
   try {
     const response = await fetch(buildUrl(getRefreshEndpointPath()), {
       method: 'POST',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ refreshToken }),
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
     });
 
     const parsedBody = await parseResponse(response);
@@ -218,6 +212,11 @@ async function refreshAccessToken(): Promise<boolean> {
 
     const normalizedTokens = normalizeAuthPayload(parsedBody);
 
+    if (!normalizedTokens.accessToken && !refreshToken) {
+      // Cookie-based sessions may refresh server-side without returning a token payload.
+      return true;
+    }
+
     if (!normalizedTokens.accessToken) {
       if (!usingDummyBypass) {
         clearAuthTokens();
@@ -227,7 +226,7 @@ async function refreshAccessToken(): Promise<boolean> {
 
     setAuthTokens({
       accessToken: normalizedTokens.accessToken,
-      refreshToken: normalizedTokens.refreshToken ?? refreshToken,
+      refreshToken: normalizedTokens.refreshToken ?? refreshToken ?? undefined,
       expiresAt:
         normalizedTokens.expiresAt ??
         (normalizedTokens.expiresIn ? Date.now() + normalizedTokens.expiresIn * 1000 : undefined),
@@ -304,6 +303,7 @@ export const apiClient = {
 
     const response = await fetch(buildUrl(path, query), {
       ...rest,
+      credentials: 'include',
       headers: buildHeaders(headers, hasBody, isFormData),
       body: hasBody && !isFormData ? JSON.stringify(body) : (body as BodyInit | null | undefined),
     });

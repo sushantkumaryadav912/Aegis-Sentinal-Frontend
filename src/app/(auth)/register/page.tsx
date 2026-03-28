@@ -93,6 +93,18 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const getOAuthStartUrl = (provider: 'google' | 'github'): string | null => {
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_URL?.trim() ||
+      process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
+
+    if (!apiBase) {
+      return null;
+    }
+
+    return `${apiBase.replace(/\/$/, '')}/api/cidr/auth/${provider}`;
+  };
+
   const {
     register,
     handleSubmit,
@@ -130,8 +142,13 @@ export default function RegisterPage() {
   };
 
   const handleOAuthSignup = (provider: 'github' | 'google') => {
-    const providerLabel = provider === 'github' ? 'GitHub' : 'Google';
-    setServerError(`${providerLabel} signup is coming soon.`);
+    const oauthUrl = getOAuthStartUrl(provider);
+    if (!oauthUrl) {
+      setServerError('Missing NEXT_PUBLIC_API_URL or NEXT_PUBLIC_BACKEND_URL for OAuth.');
+      return;
+    }
+
+    window.location.assign(oauthUrl);
   };
 
   return (

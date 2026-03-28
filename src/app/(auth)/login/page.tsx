@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -36,6 +36,18 @@ export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  const getOAuthStartUrl = (provider: 'google' | 'github'): string | null => {
+    const apiBase =
+      process.env.NEXT_PUBLIC_API_URL?.trim() ||
+      process.env.NEXT_PUBLIC_BACKEND_URL?.trim();
+
+    if (!apiBase) {
+      return null;
+    }
+
+    return `${apiBase.replace(/\/$/, '')}/api/cidr/auth/${provider}`;
+  };
   
   // React Hook Form Setup
   const {
@@ -65,8 +77,25 @@ export default function LoginPage() {
     }
   };
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const error = new URLSearchParams(window.location.search).get('error');
+    if (error) {
+      setServerError(error);
+    }
+  }, []);
+
   const handleOAuthLogin = async (provider: 'github' | 'google') => {
-    setServerError(`${provider[0].toUpperCase()}${provider.slice(1)} OAuth is not configured yet.`);
+    const oauthUrl = getOAuthStartUrl(provider);
+    if (!oauthUrl) {
+      setServerError('Missing NEXT_PUBLIC_API_URL or NEXT_PUBLIC_BACKEND_URL for OAuth.');
+      return;
+    }
+
+    window.location.assign(oauthUrl);
   };
 
   return (

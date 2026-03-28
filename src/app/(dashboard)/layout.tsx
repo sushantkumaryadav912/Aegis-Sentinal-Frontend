@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { getAccessToken, hasRefreshToken, isDummyAuthBypassEnabled } from '@/lib/auth-tokens';
+import { apiClient } from '@/lib/api/client';
 
 export default function DashboardLayout({
   children,
@@ -14,17 +15,29 @@ export default function DashboardLayout({
   const [canRender, setCanRender] = useState(false);
 
   useEffect(() => {
-    const isAuthenticated =
-      Boolean(getAccessToken()) ||
-      hasRefreshToken() ||
-      isDummyAuthBypassEnabled();
+    const ensureSession = async () => {
+      const hasClientAuth =
+        Boolean(getAccessToken()) ||
+        hasRefreshToken() ||
+        isDummyAuthBypassEnabled();
 
-    if (!isAuthenticated) {
-      router.replace('/login');
-      return;
-    }
+      if (hasClientAuth) {
+        setCanRender(true);
+        return;
+      }
 
-    setCanRender(true);
+      try {
+        await apiClient.request('/auth/refresh', {
+          method: 'POST',
+          body: {},
+        });
+        setCanRender(true);
+      } catch {
+        router.replace('/login');
+      }
+    };
+
+    void ensureSession();
   }, [router]);
 
   if (!canRender) {
