@@ -1,6 +1,17 @@
 import { Alert, AlertStatus, PaginatedResponse, Severity } from '@/lib/types';
 import { apiClient, toPaginatedResponse, unwrapData } from '@/lib/api/client';
 
+export type RemediationAction = 'block_ip' | 'quarantine_user' | 'disable_service' | 'manual';
+
+export interface ApproveAlertPayload {
+  remediation_action?: RemediationAction;
+  notes?: string;
+}
+
+export interface MarkFalsePositivePayload {
+  reason: string;
+}
+
 export interface AlertsQueryParams {
   page?: number;
   limit?: number;
@@ -32,5 +43,26 @@ export async function getAlerts(params: AlertsQueryParams = {}): Promise<Paginat
 
 export async function getAlertById(id: string): Promise<Alert> {
   const rawResponse = await apiClient.request<unknown>(`/alerts/${id}`);
+  return unwrapData<Alert>(rawResponse);
+}
+
+export async function approveAlert(id: string, payload: ApproveAlertPayload): Promise<Alert> {
+  const rawResponse = await apiClient.request<unknown>(`/alerts/${id}/approve`, {
+    method: 'POST',
+    body: payload,
+  });
+
+  return unwrapData<Alert>(rawResponse);
+}
+
+export async function markAlertFalsePositive(
+  id: string,
+  payload: MarkFalsePositivePayload
+): Promise<Alert> {
+  const rawResponse = await apiClient.request<unknown>(`/alerts/${id}/false-positive`, {
+    method: 'POST',
+    body: payload,
+  });
+
   return unwrapData<Alert>(rawResponse);
 }

@@ -6,7 +6,7 @@ import {
   type LoginPayload,
   type RegisterPayload,
 } from '@/lib/api/auth';
-import { clearAuthTokens, enableDummyAuthBypass } from '@/lib/auth-tokens';
+import { clearAuthTokens } from '@/lib/auth-tokens';
 
 function getDummyAuthEmail(): string {
   return (process.env.NEXT_PUBLIC_DUMMY_AUTH_EMAIL ?? '').trim().toLowerCase();
@@ -29,9 +29,14 @@ function shouldBypassAuth(email: string, password: string): boolean {
 
 export async function loginUser(payload: LoginPayload): Promise<AuthResponse> {
   if (shouldBypassAuth(payload.email, payload.password)) {
+    // Use configured dummy credentials through the real backend login route
+    // so cookie-based protected APIs can authenticate normally.
     clearAuthTokens();
-    enableDummyAuthBypass();
-    return { message: 'Authenticated using local dummy credentials.' };
+    const response = await login(payload);
+    return {
+      ...response,
+      message: response.message ?? 'Authenticated using configured dummy credentials.',
+    };
   }
 
   return login(payload);
@@ -40,8 +45,11 @@ export async function loginUser(payload: LoginPayload): Promise<AuthResponse> {
 export async function registerUser(payload: RegisterPayload): Promise<AuthResponse> {
   if (shouldBypassAuth(payload.email, payload.password)) {
     clearAuthTokens();
-    enableDummyAuthBypass();
-    return { message: 'Registered using local dummy credentials.' };
+    const response = await register(payload);
+    return {
+      ...response,
+      message: response.message ?? 'Registered using configured dummy credentials.',
+    };
   }
 
   return register(payload);

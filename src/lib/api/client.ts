@@ -3,7 +3,6 @@ import {
   clearAuthTokens,
   getAccessToken,
   getRefreshToken,
-  isDummyAuthBypassEnabled,
   setAuthTokens,
 } from '@/lib/auth-tokens';
 
@@ -188,7 +187,6 @@ function normalizeAuthPayload(payload: unknown): {
 
 async function refreshAccessToken(): Promise<boolean> {
   const refreshToken = getRefreshToken();
-  const usingDummyBypass = isDummyAuthBypassEnabled();
 
   try {
     const response = await fetch(buildUrl(getRefreshEndpointPath()), {
@@ -204,9 +202,7 @@ async function refreshAccessToken(): Promise<boolean> {
     const parsedBody = await parseResponse(response);
 
     if (!response.ok) {
-      if (!usingDummyBypass) {
-        clearAuthTokens();
-      }
+      clearAuthTokens();
       return false;
     }
 
@@ -218,9 +214,7 @@ async function refreshAccessToken(): Promise<boolean> {
     }
 
     if (!normalizedTokens.accessToken) {
-      if (!usingDummyBypass) {
-        clearAuthTokens();
-      }
+      clearAuthTokens();
       return false;
     }
 
@@ -234,9 +228,7 @@ async function refreshAccessToken(): Promise<boolean> {
 
     return true;
   } catch {
-    if (!usingDummyBypass) {
-      clearAuthTokens();
-    }
+    clearAuthTokens();
     return false;
   }
 }

@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { simulateDelay, formatTimestamp, cn } from '@/lib/utils';
+import { formatTimestamp, cn } from '@/lib/utils';
 import { AlertStatus } from '@/lib/types';
 import { useAlertById } from '@/hooks/useAlerts';
 import { useWorkflows } from '@/hooks/useWorkflows';
+import { approveAlert, markAlertFalsePositive, RemediationAction } from '@/lib/api/alerts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,6 +62,10 @@ export default function AlertDetailPage() {
   const [remediationDialogOpen, setRemediationDialogOpen] = useState(false);
   const [remediationLoading, setRemediationLoading] = useState(false);
   const [statusChangeLoading, setStatusChangeLoading] = useState(false);
+  const [remediationAction, setRemediationAction] = useState<RemediationAction>('manual');
+  const [remediationNotes, setRemediationNotes] = useState('');
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const optimisticStatus = statusOverrides[alertId];
 
@@ -73,24 +78,91 @@ export default function AlertDetailPage() {
       : alertData;
   const workflows = workflowsData?.items ?? [];
 
+  const workflowHints: Record<RemediationAction, string> = {
+    block_ip: 'Use when the source IP is clearly malicious and can be blocked immediately.',
+    quarantine_user: 'Use when a compromised user identity should be isolated for investigation.',
+    disable_service: 'Use when service-level containment is needed to prevent blast radius.',
+    manual: 'Use when an analyst should choose the exact runbook step-by-step.',
+  };
+
   const handleRemediationAction = async () => {
     setRemediationLoading(true);
-    await simulateDelay(2000);
-    setRemediationLoading(false);
-    setRemediationDialogOpen(false);
-    await refetchWorkflows();
-    window.alert('Remediation workflow initiated successfully! Check the Related Workflows section below.');
+    setActionError(null);
+    setActionMessage(null);
+
+    try {
+      const updatedAlert = await approveAlert(alertId, {
+        remediation_action: remediationAction,
+        notes: remediationNotes.trim() || undefined,
+      });
+
+      setStatusOverrides((current) => ({
+        ...current,
+        [alertId]: updatedAlert.status,
+      }));
+
+      setActionMessage(
+        `Workflow "${remediationAction.replace('_', ' ')}" executed. Check Related Workflows below.`
+      );
+      setRemediationDialogOpen(false);
+      setRemediationNotes('');
+
+      await Promise.all([refetchAlert(), refetchWorkflows()]);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Failed to execute remediation workflow.');
+    } finally {
+      setRemediationLoading(false);
+    }
   };
 
   const handleStatusChange = async (newStatus: AlertStatus) => {
     if (!alert) return;
+
     setStatusChangeLoading(true);
-    await simulateDelay(1000);
-    setStatusOverrides((current) => ({
-      ...current,
-      [alertId]: newStatus,
-    }));
-    setStatusChangeLoading(false);
+    setActionError(null);
+    setActionMessage(null);
+
+    try {
+      if (newStatus === 'false_positive') {
+        const updatedAlert = await markAlertFalsePositive(alertId, {
+          reason: 'Marked as false positive by analyst from alert detail view.',
+        });
+
+        setStatusOverrides((current) => ({
+          ...current,
+          [alertId]: updatedAlert.status,
+        }));
+        setActionMessage('Alert marked as false positive and saved.');
+        await Promise.all([refetchAlert(), refetchWorkflows()]);
+        return;
+      }
+
+      if (newStatus === 'resolved') {
+        const updatedAlert = await approveAlert(alertId, {
+          remediation_action: 'manual',
+          notes: 'Resolved by analyst from alert detail view.',
+        });
+
+        setStatusOverrides((current) => ({
+          ...current,
+          [alertId]: updatedAlert.status,
+        }));
+        setActionMessage('Alert resolved and workflow recorded.');
+        await Promise.all([refetchAlert(), refetchWorkflows()]);
+        return;
+      }
+
+      // Investigating is currently a UI triage state; keep it local for now.
+      setStatusOverrides((current) => ({
+        ...current,
+        [alertId]: newStatus,
+      }));
+      setActionMessage('Alert marked as investigating in your current session.');
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : 'Unable to update alert status.');
+    } finally {
+      setStatusChangeLoading(false);
+    }
   };
 
   if ((isAlertLoading && !alertData) || (isWorkflowsLoading && !workflowsData)) {
@@ -276,6 +348,17 @@ export default function AlertDetailPage() {
               Mark as False Positive
             </Button>
           </div>
+
+          {actionError ? (
+            <p className="text-sm text-red-400 mt-3" data-testid="alert-action-error">
+              {actionError}
+            </p>
+          ) : null}
+          {actionMessage ? (
+            <p className="text-sm text-emerald-400 mt-3" data-testid="alert-action-success">
+              {actionMessage}
+            </p>
+          ) : null}
         </CardContent>
       </Card>
 
@@ -370,10 +453,43 @@ export default function AlertDetailPage() {
           <div className="py-4">
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-4">
               <p className="text-sm text-slate-300 mb-2">
-                <strong>Remediation Action:</strong>
+                <strong>Recommended Context:</strong>
               </p>
               <p className="text-sm text-slate-400">{alert.recommendation}</p>
             </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="workflow-action-select">
+                Select Workflow To Implement
+              </label>
+              <select
+                id="workflow-action-select"
+                className="w-full h-10 rounded-md border border-slate-700 bg-slate-900 px-3 text-sm text-slate-100"
+                value={remediationAction}
+                onChange={(event) => setRemediationAction(event.target.value as RemediationAction)}
+              >
+                <option value="block_ip">Block IP</option>
+                <option value="quarantine_user">Quarantine User</option>
+                <option value="disable_service">Disable Service</option>
+                <option value="manual">Manual Runbook</option>
+              </select>
+              <p className="text-xs text-slate-400 mt-2">{workflowHints[remediationAction]}</p>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-slate-300 mb-2" htmlFor="workflow-notes">
+                Optional Notes
+              </label>
+              <textarea
+                id="workflow-notes"
+                className="w-full min-h-22 rounded-md border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100"
+                placeholder="Document why this workflow was selected..."
+                value={remediationNotes}
+                onChange={(event) => setRemediationNotes(event.target.value)}
+                maxLength={1000}
+              />
+            </div>
+
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
               <p className="text-sm text-amber-400">
                 <AlertTriangle className="h-4 w-4 inline mr-1" />

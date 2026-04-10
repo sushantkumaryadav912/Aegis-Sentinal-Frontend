@@ -5,7 +5,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 Create a `.env` file (or copy `.env.example`) and set the backend URL:
 
 ```bash
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+NEXT_PUBLIC_API_PREFIX=/api/cidr
 ```
 
 The login and signup pages send requests to:

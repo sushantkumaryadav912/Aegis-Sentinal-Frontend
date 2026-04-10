@@ -80,3 +80,38 @@ export interface PaginatedResponse<T> {
   items: T[];
   meta: PaginationMeta;
 }
+
+export interface DashboardSettingsProfile {
+  full_name: string;
+  email: string;
+}
+
+export interface DashboardSettingsNotifications {
+  email_notifications: boolean;
+  slack_notifications: boolean;
+  critical_alerts_only: boolean;
+}
+
+export interface DashboardSettingsSecurity {
+  two_factor_enabled: boolean;
+  session_timeout_minutes: number | null;
+}
+
+export interface DashboardSettingsApiKeys {
+  active_key: string;
+  last_rotated_at: string;
+}
+
+export interface DashboardSettings {
+  profile: DashboardSettingsProfile;
+  notifications: DashboardSettingsNotifications;
+  security: DashboardSettingsSecurity;
+  api_keys: DashboardSettingsApiKeys;
+  updated_at: string;
+}
+
+export interface DashboardSettingsUpdate {
+  profile?: Partial<DashboardSettingsProfile>;
+  notifications?: Partial<DashboardSettingsNotifications>;
+  security?: Partial<DashboardSettingsSecurity>;
+}
