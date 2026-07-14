@@ -242,7 +242,7 @@ export default function ResetPasswordPage() {
                 )}
 
                 <p className="text-center text-xs text-slate-600 mt-6">
-                    © {new Date().getFullYear()} CIDR Security. All rights reserved.
+                    © {new Date().getFullYear()} Aegis Sentinel. All rights reserved.
                 </p>
             </div>
         </div>

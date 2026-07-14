@@ -2,7 +2,7 @@ import { SectionWrapper } from '@/components/marketing/SectionWrapper';
 import { AnimatedContainer } from '@/components/marketing/AnimatedContainer';
 
 export const metadata = {
-  title: 'Privacy Policy | CIDR Platform',
+  title: 'Privacy Policy | Aegis Sentinel',
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
             <div className="prose prose-invert prose-slate max-w-none">
               <h2 className="text-2xl font-semibold text-slate-200 mt-8 mb-4">1. Introduction & Applicability</h2>
               <p className="text-slate-400 mb-6 leading-relaxed">
-                CIDR operates out of Symbiosis Centre for Entrepreneurship & Innovation, Pune, Maharashtra. 
+                Aegis Sentinel operates out of Symbiosis Centre for Entrepreneurship & Innovation, Pune, Maharashtra. 
                 This Privacy Policy is published in accordance with the provisions of the <strong>Information Technology Act, 2000</strong> ("IT Act"), 
                 the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 ("SPDI Rules"), 
                 and aligns with the core principles of the <strong>Digital Personal Data Protection Act, 2023</strong> ("DPDP Act").

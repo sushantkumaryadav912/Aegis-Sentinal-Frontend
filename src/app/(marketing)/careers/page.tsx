@@ -4,7 +4,7 @@ import { AnimatedContainer } from '@/components/marketing/AnimatedContainer';
 import { CTAButton } from '@/components/marketing/CTAButton';
 
 export const metadata = {
-  title: 'Careers | CIDR Platform',
+  title: 'Careers | Aegis Sentinel',
   description: 'Join our team to build next-generation cloud security.',
 };
 
@@ -51,7 +51,7 @@ export default function CareersPage() {
         <div className="text-center relative z-10 max-w-3xl mx-auto">
           <AnimatedContainer animation="fade-up">
             <h1 className="text-4xl md:text-6xl font-extrabold text-slate-100 tracking-tight mb-6">
-              Join the CIDR team
+              Join the Aegis Sentinel team
             </h1>
             <p className="text-xl text-slate-400 font-light leading-relaxed mb-6">
               We're building an autonomous security backbone for the cloud-native world. Help us design and scale an engine protecting millions of compute resources.
@@ -100,8 +100,8 @@ export default function CareersPage() {
         <AnimatedContainer animation="fade-up" delay={0.6} className="mt-16 text-center max-w-2xl mx-auto p-8 rounded-2xl border border-dashed border-slate-800 bg-slate-900/20">
             <h3 className="text-lg font-semibold text-slate-200 mb-2">Don't see a fit?</h3>
             <p className="text-slate-400 mb-6 text-sm">We're always looking for exceptional talent in security and engineering. Send us your resume anyway.</p>
-            <CTAButton href="/contact" variant="link" className="text-blue-400 hover:text-blue-300">
-               careers@cidr.security
+            <CTAButton href="mailto:careers@aegissentinel.com" variant="link" className="text-blue-400 hover:text-blue-300">
+               careers@aegissentinel.com
             </CTAButton>
         </AnimatedContainer>
       </SectionWrapper>

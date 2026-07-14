@@ -2,7 +2,7 @@ import { SectionWrapper } from '@/components/marketing/SectionWrapper';
 import { AnimatedContainer } from '@/components/marketing/AnimatedContainer';
 
 export const metadata = {
-  title: 'Cookie Policy | CIDR Platform',
+  title: 'Cookie Policy | Aegis Sentinel',
 };
 
 export default function CookiesPage() {
@@ -22,8 +22,8 @@ export default function CookiesPage() {
               
               <h2 className="text-2xl font-semibold text-slate-200 mt-8 mb-4">2. Essential Security Cookies</h2>
               <p className="text-slate-400 mb-6 leading-relaxed">
-                Due to the sensitive nature of the CIDR platform, we strictly deploy <strong>First-Party HttpOnly Cookies</strong> to manage authenticated sessions. 
-                These cookies are strictly necessary to enforce authorization checks and prevent Cross-Site Request Forgery (CSRF). They cannot be disabled without terminating access to the threat detection interfaces.
+                 Due to the sensitive nature of the Aegis Sentinel platform, we strictly deploy <strong>First-Party HttpOnly Cookies</strong> to manage authenticated sessions. 
+                 These cookies are strictly necessary to enforce authorization checks and prevent Cross-Site Request Forgery (CSRF). They cannot be disabled without terminating access to the threat detection interfaces.
               </p>
               
               <h2 className="text-2xl font-semibold text-slate-200 mt-8 mb-4">3. Data Minimization</h2>

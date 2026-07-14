@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/layout/sidebar';
 import { getAccessToken, hasRefreshToken } from '@/lib/auth-tokens';
 import { apiClient } from '@/lib/api/client';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const [canRender, setCanRender] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const ensureSession = async () => {
@@ -46,9 +48,12 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <Sidebar />
-      <main className="lg:pl-64">
+    <div className="min-h-screen bg-slate-950 bg-grid-pattern relative">
+      <div className="absolute inset-0 bg-radial-gradient-glow pointer-events-none opacity-50" />
+      
+      <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      
+      <main className={cn("transition-all duration-300 relative z-10", isCollapsed ? "lg:pl-20" : "lg:pl-64")}>
         <div className="px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </div>

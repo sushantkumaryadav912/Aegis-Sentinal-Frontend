@@ -1,17 +1,16 @@
 'use client';
 
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 const Table = React.forwardRef<
     HTMLTableElement,
-    React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto">
+    React.HTMLAttributes<HTMLTableElement> & { containerClassName?: string }
+>(({ className, containerClassName, ...props }, ref) => (
+    <div className={cn("relative w-full overflow-auto rounded-2xl border border-slate-800/80 bg-slate-950/40 backdrop-blur-md", containerClassName)}>
         <table
             ref={ref}
-            className={cn("w-full caption-bottom text-sm", className)}
+            className={cn("w-full caption-bottom text-sm border-collapse", className)}
             {...props}
         />
     </div>
@@ -22,7 +21,7 @@ const TableHeader = React.forwardRef<
     HTMLTableSectionElement,
     React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+    <thead ref={ref} className={cn("[&_tr]:border-b [&_tr]:border-slate-800/80 bg-slate-900/30", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -32,7 +31,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <tbody
         ref={ref}
-        className={cn("[&_tr:last-child]:border-0", className)}
+        className={cn("[&_tr:last-child]:border-0 [&_tr]:transition-colors [&_tr]:duration-200", className)}
         {...props}
     />
 ))
@@ -45,7 +44,7 @@ const TableFooter = React.forwardRef<
     <tfoot
         ref={ref}
         className={cn(
-            "border-t border-slate-700 bg-slate-800/50 font-medium [&>tr]:last:border-b-0",
+            "border-t border-slate-800 bg-slate-900/50 font-medium [&>tr]:last:border-b-0",
             className
         )}
         {...props}
@@ -60,7 +59,7 @@ const TableRow = React.forwardRef<
     <tr
         ref={ref}
         className={cn(
-            "border-b border-slate-800 transition-colors hover:bg-slate-800/50 data-[state=selected]:bg-slate-800",
+            "border-b border-slate-800/60 hover:bg-slate-900/40 data-[state=selected]:bg-slate-900/60",
             className
         )}
         {...props}
@@ -75,7 +74,7 @@ const TableHead = React.forwardRef<
     <th
         ref={ref}
         className={cn(
-            "h-12 px-4 text-left align-middle font-medium text-slate-400 [&:has([role=checkbox])]:pr-0",
+            "h-12 px-5 text-left align-middle font-semibold text-slate-400 [&:has([role=checkbox])]:pr-0 uppercase tracking-wider text-xs",
             className
         )}
         {...props}
@@ -89,7 +88,7 @@ const TableCell = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <td
         ref={ref}
-        className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0 text-slate-300", className)}
+        className={cn("p-5 align-middle [&:has([role=checkbox])]:pr-0 text-slate-300 font-light", className)}
         {...props}
     />
 ))
@@ -101,7 +100,7 @@ const TableCaption = React.forwardRef<
 >(({ className, ...props }, ref) => (
     <caption
         ref={ref}
-        className={cn("mt-4 text-sm text-slate-500", className)}
+        className={cn("mt-4 text-sm text-slate-500 font-light", className)}
         {...props}
     />
 ))

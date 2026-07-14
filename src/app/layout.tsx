@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CIDR - Cloud Security Operations Platform",
+  title: "Aegis Sentinel - Cloud Security Operations Platform",
   description: "Intelligent cloud security operations platform for AWS, Azure, and GCP",
 };
 
