@@ -6,6 +6,23 @@ import { Sparkles, Send, Bot, User, CornerDownLeft, AlertCircle, ShieldAlert, Ke
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+const responsibilities = [
+  'Explain incidents',
+  'Analyze logs',
+  'Explain alerts',
+  'Generate reports',
+  'Generate SOAR playbooks',
+  'Explain IAM policies',
+  'Summarize CloudTrail events',
+  'Generate Terraform fixes',
+  'Recommend remediations',
+  'Answer questions about the customer\'s environment',
+  'Search documentation',
+  'Explain MITRE ATT&CK techniques',
+  'Assist during investigations',
+  'Help configure Aegis Sentinel itself'
+];
+
 export default function OraclePage() {
   const [messages, setMessages] = useState([
     {
@@ -226,24 +243,18 @@ resource "aws_s3_bucket_policy" "enforce_ssl" {
         {/* Right Sidebar: AI Context Panel (1 Col) */}
         <div className="space-y-6 hidden lg:block">
           <Card glass className="p-1">
-            <CardHeader>
-              <CardTitle className="text-sm font-bold text-slate-300 uppercase tracking-wider">Oracle Capability</CardTitle>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">Oracle Responsibilities</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 text-xs text-slate-400 leading-relaxed font-light">
-              <div>
-                <strong className="text-slate-200">Playbook Engine</strong>
-                <p className="mt-0.5">Generate, audit, and troubleshoot Forge containment JSON/YAML playbooks automatically.</p>
-              </div>
-              <div>
-                <strong className="text-slate-200">Exfiltration Detection</strong>
-                <p className="mt-0.5">Identifies data egress patterns and correlates them with compromised credentials.</p>
-              </div>
-              <div className="p-3 border border-slate-900 bg-slate-950/60 rounded-xl flex gap-2.5 items-start">
-                <Key className="text-cyan-400 h-4.5 w-4.5 shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-300 uppercase font-mono">IAM Auditing</span>
-                  <p className="text-[10px] text-slate-500 font-light">Oracle reads IAM policies to propose least-privilege configurations.</p>
-                </div>
+            <CardContent className="space-y-3 text-xs text-slate-400 font-light leading-relaxed">
+              <p className="text-[10px] text-slate-500 font-mono tracking-wide uppercase mb-1">Oracle should be able to:</p>
+              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
+                {responsibilities.map((resp, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-[11px] leading-snug">
+                    <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shrink-0 mt-1.5 shadow-[0_0_8px_rgba(6,182,212,0.6)]" />
+                    <span>{resp}</span>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
