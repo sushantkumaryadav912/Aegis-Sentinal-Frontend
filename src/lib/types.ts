@@ -46,6 +46,10 @@ export interface Workflow {
   executed_by: string;
   description: string;
   result?: string;
+  owasp_category?: string;
+  owasp_code?: string;
+  nist_phase?: string;
+  compliance_ref?: string;
 }
 
 export interface AuditLog {

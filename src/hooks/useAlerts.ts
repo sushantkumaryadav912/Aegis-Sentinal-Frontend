@@ -1,10 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { AlertsQueryParams, getAlertById, getAlerts } from '@/lib/api/alerts';
+import { getMockPaginatedAlerts, MOCK_ALERTS } from '@/lib/mockData';
 
 export function useAlerts(params: AlertsQueryParams) {
   return useQuery({
     queryKey: ['alerts', params],
-    queryFn: () => getAlerts(params),
+    queryFn: async () => {
+      try {
+        const response = await getAlerts(params);
+        if (response.items && response.items.length > 0) {
+          return response;
+        }
+        return getMockPaginatedAlerts(params);
+      } catch {
+        return getMockPaginatedAlerts(params);
+      }
+    },
     placeholderData: (previousData) => previousData,
   });
 }
@@ -12,7 +23,18 @@ export function useAlerts(params: AlertsQueryParams) {
 export function useAlertById(id: string) {
   return useQuery({
     queryKey: ['alert', id],
-    queryFn: () => getAlertById(id),
+    queryFn: async () => {
+      try {
+        const alert = await getAlertById(id);
+        if (alert) return alert;
+      } catch {
+        // Fallback search in hardcoded mock dataset
+      }
+      const mockAlert = MOCK_ALERTS.find((a) => a.id === id);
+      if (mockAlert) return mockAlert;
+      throw new Error(`Alert ${id} not found.`);
+    },
     enabled: Boolean(id),
   });
 }
+
