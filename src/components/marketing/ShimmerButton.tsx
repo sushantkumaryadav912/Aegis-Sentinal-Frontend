@@ -26,7 +26,7 @@ export function ShimmerButton({ href, children, className, ...props }: ShimmerBu
     return (
       <Link href={href} className={classes}>
         {/* Shimmer sweep */}
-        <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 translate-x-[-100%] group-hover:animate-[shimmer_1.2s_ease-in-out]" />
+        <span className="absolute inset-0 w-[200%] h-full bg-linear-to-r from-transparent via-white/40 to-transparent -skew-x-12 translate-x-[-100%] group-hover:animate-[shimmer_1.2s_ease-in-out]" />
         {content}
       </Link>
     );
@@ -34,7 +34,7 @@ export function ShimmerButton({ href, children, className, ...props }: ShimmerBu
 
   return (
     <button className={classes} {...props}>
-      <span className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -skew-x-12 translate-x-[-100%] group-hover:animate-[shimmer_1.2s_ease-in-out]" />
+      <span className="absolute inset-0 w-[200%] h-full bg-linear-to-r from-transparent via-white/40 to-transparent -skew-x-12 translate-x-[-100%] group-hover:animate-[shimmer_1.2s_ease-in-out]" />
       {content}
     </button>
   );

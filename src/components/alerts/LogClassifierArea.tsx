@@ -973,7 +973,7 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
 
           {/* Empty Ready State before running */}
           {!isAnalyzing && !result && (
-            <div className="bg-slate-950/60 border border-slate-900 rounded-2xl p-8 text-center backdrop-blur-md flex flex-col items-center justify-center min-h-[460px] space-y-4">
+            <div className="bg-slate-950/60 border border-slate-900 rounded-2xl p-8 text-center backdrop-blur-md flex flex-col items-center justify-center min-h-115 space-y-4">
               <div className="h-16 w-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
                 <Terminal size={32} />
               </div>

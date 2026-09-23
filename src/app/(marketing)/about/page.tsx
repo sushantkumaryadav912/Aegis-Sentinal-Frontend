@@ -113,7 +113,7 @@ export default function AboutPage() {
               <div 
                 className="group relative rounded-2xl border border-slate-900 bg-slate-950/60 p-6 flex flex-col items-center justify-between text-center overflow-hidden transition-all duration-300 hover:border-cyan-500/25 hover:shadow-[0_0_30px_rgba(0,229,255,0.04)]"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <div className="absolute inset-0 bg-linear-to-b from-cyan-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                 
                 <div className="relative w-20 h-20 rounded-full border border-slate-800 p-1 mb-4 overflow-hidden group-hover:border-cyan-400 transition-colors duration-300">
                   <Image src={member.image} alt={member.name} width={80} height={80} className="rounded-full object-cover transition-transform duration-300 group-hover:scale-105" />

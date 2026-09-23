@@ -144,7 +144,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
                   <div 
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" 
+                    className="h-full bg-linear-to-r from-blue-500 to-cyan-400 rounded-full transition-all duration-500" 
                     style={{ width: `${(riskDistribution.low / Math.max(totalDistributionAlerts, 1)) * 100}%` }}
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
                   <div 
-                    className="h-full bg-gradient-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-500" 
+                    className="h-full bg-linear-to-r from-amber-500 to-yellow-400 rounded-full transition-all duration-500" 
                     style={{ width: `${(riskDistribution.medium / Math.max(totalDistributionAlerts, 1)) * 100}%` }}
                   />
                 </div>
@@ -172,7 +172,7 @@ export default function OverviewPage() {
                 </div>
                 <div className="h-2 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-900">
                   <div 
-                    className="h-full bg-gradient-to-r from-red-500 to-rose-400 rounded-full transition-all duration-500" 
+                    className="h-full bg-linear-to-r from-red-500 to-rose-400 rounded-full transition-all duration-500" 
                     style={{ width: `${(riskDistribution.high / Math.max(totalDistributionAlerts, 1)) * 100}%` }}
                   />
                 </div>

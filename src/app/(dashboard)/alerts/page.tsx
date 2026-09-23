@@ -63,7 +63,6 @@ export default function AlertsPage() {
   const [severityFilter, setSeverityFilter] = useState<Severity | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<AlertStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState<'detections' | 'architecture' | 'helios' | 'yaml'>('detections');
   const [activeTab, setActiveTab] = useState<'detections' | 'classifier' | 'architecture' | 'helios' | 'yaml'>('detections');
 
   // Helios Catalogue Filters
@@ -193,7 +192,7 @@ export default function AlertsPage() {
       </div>
 
       {/* Sentinel Core vs Helios Boundary Principle Callout */}
-      <div className="border border-cyan-500/20 bg-gradient-to-r from-cyan-950/30 via-slate-950 to-purple-950/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md">
+      <div className="border border-cyan-500/20 bg-linear-to-r from-cyan-950/30 via-slate-950 to-purple-950/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs font-bold font-mono text-cyan-400 uppercase tracking-wider">
             <Lock size={14} /> Architectural Boundary Locked
@@ -497,7 +496,7 @@ export default function AlertsPage() {
       {activeTab === 'helios' && (
         <div className="space-y-6 animate-fade-in">
           {/* Banner */}
-          <div className="border border-purple-500/20 bg-gradient-to-r from-purple-950/30 via-slate-950 to-cyan-950/20 rounded-2xl p-5 space-y-2 backdrop-blur-md">
+          <div className="border border-purple-500/20 bg-linear-to-r from-purple-950/30 via-slate-950 to-cyan-950/20 rounded-2xl p-5 space-y-2 backdrop-blur-md">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h3 className="text-base font-bold text-purple-300 flex items-center gap-2">
@@ -652,7 +651,7 @@ export default function AlertsPage() {
                       <span className="text-slate-500">capability: </span>{model.capability}
                     </div>
 
-                    <p className="text-xs text-slate-400 font-light leading-relaxed min-h-[36px]">
+                    <p className="text-xs text-slate-400 font-light leading-relaxed min-h-9">
                       {model.description}
                     </p>
 
@@ -724,7 +723,7 @@ export default function AlertsPage() {
             <div className="absolute right-4 top-4 text-[10px] text-slate-600 font-mono">
               YAML Syntax • UTF-8 • 32 Models Registered
             </div>
-            <pre className="overflow-x-auto leading-relaxed text-slate-300 max-h-[600px] scrollbar-thin">
+            <pre className="overflow-x-auto leading-relaxed text-slate-300 max-h-150 scrollbar-thin">
               {HELIOS_RAW_YAML_CONFIG}
             </pre>
           </div>

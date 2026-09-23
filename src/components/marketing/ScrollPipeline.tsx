@@ -52,7 +52,7 @@ export function ScrollPipeline() {
   return (
     <div className="relative max-w-4xl mx-auto px-4 py-8">
       {/* Central Connective Line */}
-      <div className="absolute left-[39px] md:left-1/2 top-8 bottom-8 w-0.5 bg-gradient-to-b from-cyan-500 via-purple-500 to-emerald-500 opacity-20 pointer-events-none -translate-x-1/2" />
+      <div className="absolute left-[39px] md:left-1/2 top-8 bottom-8 w-0.5 bg-linear-to-b from-cyan-500 via-purple-500 to-emerald-500 opacity-20 pointer-events-none -translate-x-1/2" />
 
       <div className="space-y-16">
         {steps.map((step, idx) => {

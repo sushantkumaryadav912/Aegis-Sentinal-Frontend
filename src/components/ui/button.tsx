@@ -18,7 +18,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       outline: 'border border-slate-800 bg-transparent text-slate-300 hover:bg-slate-900/50 hover:text-white hover:border-slate-700',
       ghost: 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-100',
       link: 'text-cyan-400 underline-offset-4 hover:underline hover:text-cyan-300',
-      glow: 'bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 text-slate-950 font-bold hover:shadow-[0_0_25px_rgba(0,229,255,0.55)] transition-shadow duration-300',
+      glow: 'bg-linear-to-r from-cyan-400 via-indigo-500 to-purple-600 text-slate-950 font-bold hover:shadow-[0_0_25px_rgba(0,229,255,0.55)] transition-shadow duration-300',
       glass: 'glass-panel text-slate-200 hover:bg-white/5 hover:text-white hover:border-cyan-500/30'
     };
 

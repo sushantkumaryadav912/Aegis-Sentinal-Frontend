@@ -209,7 +209,7 @@ export default function WorkflowsPage() {
       </div>
 
       {/* OWASP & NIST Guidelines Standard Banner */}
-      <div className="border border-emerald-500/20 bg-gradient-to-r from-emerald-950/30 via-slate-950 to-cyan-950/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md">
+      <div className="border border-emerald-500/20 bg-linear-to-r from-emerald-950/30 via-slate-950 to-cyan-950/20 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 backdrop-blur-md">
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-xs font-bold font-mono text-emerald-400 uppercase tracking-wider">
             <Shield size={14} /> OWASP Cloud Top 10 & NIST SP 800-61 Standard Remediation

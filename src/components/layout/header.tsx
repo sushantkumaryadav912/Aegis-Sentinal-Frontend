@@ -92,7 +92,7 @@ const Header = () => {
                     {isActive(item.path) && (
                       <motion.div 
                         layoutId="navbar-indicator"
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full"
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-linear-to-r from-cyan-400 to-indigo-500 rounded-full"
                       />
                     )}
                   </Link>
