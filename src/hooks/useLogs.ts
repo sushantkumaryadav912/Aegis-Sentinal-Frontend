@@ -15,6 +15,7 @@ export function useLogs(params: LogsQueryParams) {
       } catch {
         return getMockPaginatedLogs(params);
       }
+      return getLogs(params);
     },
     placeholderData: (previousData) => previousData,
   });

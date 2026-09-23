@@ -1,5 +1,5 @@
-import { ApiError, apiClient, unwrapData } from '@/lib/api/client';
 import { clearAuthTokens, getRefreshToken, setAuthTokens } from '@/lib/auth-tokens';
+import { simulateNetworkDelay } from './delay';
 
 export type LoginPayload = {
   email: string;
@@ -21,87 +21,45 @@ export type AuthResponse = {
   expiresAt?: number;
 };
 
-function getLoginEndpointPath(): string {
-  return process.env.NEXT_PUBLIC_AUTH_LOGIN_PATH ?? '/auth/login';
-}
-
-function getRegisterEndpointPath(): string {
-  return process.env.NEXT_PUBLIC_AUTH_REGISTER_PATH ?? '/auth/signup';
-}
-
-function getLogoutEndpointPath(): string {
-  return process.env.NEXT_PUBLIC_AUTH_LOGOUT_PATH ?? '/auth/logout';
-}
-
-function normalizeTokens(payload: AuthResponse): {
-  accessToken?: string;
-  refreshToken?: string;
-  expiresAt?: number;
-} {
-  const accessToken = payload.accessToken;
-  const refreshToken = payload.refreshToken;
-  const expiresAt = payload.expiresAt ?? (payload.expiresIn ? Date.now() + payload.expiresIn * 1000 : undefined);
-
-  return {
-    accessToken,
-    refreshToken,
-    expiresAt,
-  };
-}
-
-function buildErrorMessage(status: number, fallback: string): string {
-  if (status >= 500) {
-    return 'Authentication service is unavailable. Please try again shortly.';
-  }
-
-  return fallback;
-}
-
-async function postAuth<TPayload>(endpoint: string, payload: TPayload): Promise<AuthResponse> {
-  try {
-    const rawResponse = await apiClient.request<unknown>(endpoint, {
-      method: 'POST',
-      body: payload,
-    });
-
-    const unwrapped = unwrapData<AuthResponse>(rawResponse) ?? {};
-    const normalized = normalizeTokens(unwrapped);
-
-    if (normalized.accessToken) {
-      setAuthTokens({
-        accessToken: normalized.accessToken,
-        refreshToken: normalized.refreshToken,
-        expiresAt: normalized.expiresAt,
-      });
-    }
-
-    return unwrapped;
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw new Error(buildErrorMessage(error.status, error.message));
-    }
-
-    throw error;
-  }
-}
-
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
-  return postAuth(getLoginEndpointPath(), payload);
+  await simulateNetworkDelay(500, 950);
+  const mockResponse: AuthResponse = {
+    message: 'Authenticated successfully with Aegis Sentinel Security Platform',
+    accessToken: 'mock_jwt_access_token_aegis_secops_2026',
+    refreshToken: 'mock_jwt_refresh_token_aegis_secops_2026',
+    expiresIn: 3600,
+    expiresAt: Date.now() + 3600 * 1000,
+  };
+
+  setAuthTokens({
+    accessToken: mockResponse.accessToken!,
+    refreshToken: mockResponse.refreshToken,
+    expiresAt: mockResponse.expiresAt,
+  });
+
+  return mockResponse;
 }
 
 export async function register(payload: RegisterPayload): Promise<AuthResponse> {
-  return postAuth(getRegisterEndpointPath(), payload);
+  await simulateNetworkDelay(600, 1050);
+  const mockResponse: AuthResponse = {
+    message: 'Registered successfully with Aegis Sentinel',
+    accessToken: 'mock_jwt_access_token_aegis_secops_2026',
+    refreshToken: 'mock_jwt_refresh_token_aegis_secops_2026',
+    expiresIn: 3600,
+    expiresAt: Date.now() + 3600 * 1000,
+  };
+
+  setAuthTokens({
+    accessToken: mockResponse.accessToken!,
+    refreshToken: mockResponse.refreshToken,
+    expiresAt: mockResponse.expiresAt,
+  });
+
+  return mockResponse;
 }
 
 export async function logout(): Promise<void> {
-  const refreshToken = getRefreshToken();
-
-  try {
-    await apiClient.request<unknown>(getLogoutEndpointPath(), {
-      method: 'POST',
-      body: refreshToken ? { refreshToken } : {},
-    });
-  } finally {
-    clearAuthTokens();
-  }
+  await simulateNetworkDelay(300, 600);
+  clearAuthTokens();
 }

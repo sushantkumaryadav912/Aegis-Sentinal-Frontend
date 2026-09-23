@@ -1,5 +1,7 @@
 import { Log, PaginatedResponse } from '@/lib/types';
 import { apiClient, toPaginatedResponse } from '@/lib/api/client';
+import { getMockPaginatedLogs } from '@/lib/mockData';
+import { simulateNetworkDelay } from './delay';
 
 export interface LogsQueryParams {
   page?: number;
@@ -27,4 +29,6 @@ export async function getLogs(params: LogsQueryParams = {}): Promise<PaginatedRe
   });
 
   return toPaginatedResponse<Log>(rawResponse, { page, limit });
+  await simulateNetworkDelay(400, 850);
+  return getMockPaginatedLogs(params);
 }

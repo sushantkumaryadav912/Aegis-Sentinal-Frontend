@@ -1,5 +1,7 @@
 import { PaginatedResponse, Workflow, WorkflowStatus } from '@/lib/types';
 import { apiClient, toPaginatedResponse } from '@/lib/api/client';
+import { getMockPaginatedWorkflows } from '@/lib/mockData';
+import { simulateNetworkDelay } from './delay';
 
 export interface WorkflowsQueryParams {
   page?: number;
@@ -28,4 +30,6 @@ export async function getWorkflows(params: WorkflowsQueryParams = {}): Promise<P
   });
 
   return toPaginatedResponse<Workflow>(rawResponse, { page, limit });
+  await simulateNetworkDelay(400, 850);
+  return getMockPaginatedWorkflows(params);
 }

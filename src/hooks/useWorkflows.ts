@@ -15,6 +15,7 @@ export function useWorkflows(params: WorkflowsQueryParams) {
       } catch {
         return getMockPaginatedWorkflows(params);
       }
+      return getWorkflows(params);
     },
     placeholderData: (previousData) => previousData,
   });

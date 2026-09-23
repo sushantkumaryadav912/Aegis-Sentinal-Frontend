@@ -15,6 +15,7 @@ export function useAlerts(params: AlertsQueryParams) {
       } catch {
         return getMockPaginatedAlerts(params);
       }
+      return getAlerts(params);
     },
     placeholderData: (previousData) => previousData,
   });
@@ -33,6 +34,7 @@ export function useAlertById(id: string) {
       const mockAlert = MOCK_ALERTS.find((a) => a.id === id);
       if (mockAlert) return mockAlert;
       throw new Error(`Alert ${id} not found.`);
+      return getAlertById(id);
     },
     enabled: Boolean(id),
   });

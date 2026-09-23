@@ -224,13 +224,13 @@ export default function MarketingHome() {
         </div>
       </SectionWrapper>
 
-      {/* IDS/IPS Comparison Section */}
+      {/* IDS/IPS/IRS Comparison Section */}
       <SectionWrapper className="bg-[#02050c] border-b border-slate-900" id="comparison">
         <div className="text-center mb-16 max-w-3xl mx-auto">
-          <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase font-mono">INTELLIGENCE MATRIX</span>
-          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-100 mt-2 mb-6 tracking-tight">IDS/IPS Comparison</h2>
+          <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase font-mono">INTELLIGENCE & RESPONSE MATRIX</span>
+          <h2 className="text-3xl md:text-5xl font-extrabold text-slate-100 mt-2 mb-6 tracking-tight">IDS / IPS / IRS Comparison</h2>
           <p className="text-base text-slate-400 font-light leading-relaxed">
-            Review capabilities, deployment scopes, platforms, and pricing across 24 standard security systems compared directly with Aegis Sentinel.
+            Review capabilities, deployment scopes, automated intrusion response (IRS / SOAR), platforms, and pricing across 26 security systems compared directly with Aegis Sentinel.
           </p>
         </div>
 

@@ -129,6 +129,7 @@ Executing Forge SOAR Playbook \`WF-2026-001\` adhering to **OWASP Cloud Top 10 C
     setInput('');
     setIsTyping(true);
 
+    const randomDelay = Math.floor(Math.random() * 600) + 700;
     setTimeout(() => {
       const q = textToSend.toLowerCase();
       let responseContent = '';
@@ -136,7 +137,30 @@ Executing Forge SOAR Playbook \`WF-2026-001\` adhering to **OWASP Cloud Top 10 C
       let alertAttachment = null;
       let snippet = undefined;
 
-      if (q.includes('watchtower') || q.includes('ioc') || q.includes('cve') || q.includes('intel') || q.includes('reputation') || q.includes('tor') || q.includes('198.51.100.42')) {
+      if (q.includes('routing') || q.includes('fusion') || q.includes('matrix') || q.includes('03:15') || q.includes('capability') || q.includes('shadow')) {
+        moduleTag = 'HELIOS MODEL ROUTING & SCORE FUSION';
+        responseContent = `**Helios AI/ML Model Routing & Fusion Engine Analysis:**
+• **Routing Principle**: "Helios detects. Correlation connects. Prism predicts. Oracle investigates. Watchtower retrieves knowledge. Forge generates remediation."
+• **Capability Resolution**: The Model Router evaluates event telemetry features (event_type, has_log_sequence, has_behavioral_context, numeric_feature_vector) against the registry (\`models.yaml\`).
+• **Active Scenario Analysis (03:15 UTC Credential Anomaly)**:
+  - Input: Authentication log + User behavior + Device info + S3 access telemetry.
+  - Resolved Production Models:
+    1. **DeepLog v2**: 0.82 (Ordered log sequence anomaly)
+    2. **LogFormer**: 0.88 (Context-heavy log reasoning)
+    3. **UEBA Behavioral**: 0.96 (Unusual 3 AM login & unknown device)
+    4. **Isolation Forest v4**: 0.79 (Baseline numerical feature spike)
+    5. **LogBERT v3**: 0.84 [SHADOW MODE - evaluated in background]
+• **Calibrated Score Fusion Formula**:
+  \`Final Risk = 0.20 × IF (0.79) + 0.30 × DeepLog (0.82) + 0.20 × LogFormer (0.88) + 0.30 × UEBA (0.96) = 0.89\`
+• **Decision**: 0.89 / HIGH ALERT generated -> Dispatched to Oracle Agent Runtime for forensic triage -> Forge generates Terraform containment.`;
+        alertAttachment = {
+          id: 'ALT-2026-000',
+          title: 'Anomalous 03:15 Credential Login & Mass File Access',
+          severity: 'CRITICAL',
+          time: '5 mins ago',
+          category: 'Helios Model Fusion • Risk 0.89'
+        };
+      } else if (q.includes('watchtower') || q.includes('ioc') || q.includes('cve') || q.includes('intel') || q.includes('reputation') || q.includes('tor') || q.includes('198.51.100.42')) {
         moduleTag = 'WATCHTOWER THREAT INTEL (30+ IOCs)';
         responseContent = `**Watchtower Threat Intelligence Query:**
 • **IoC Database Index**: 1.48M IoCs active | AlienVault OTX & CISA KEV synced
@@ -239,7 +263,7 @@ All 108+ Forge playbooks strictly enforce **OWASP Cloud Top 10 (CN-01 to CN-10)*
         }
       ]);
       setIsTyping(false);
-    }, 1200);
+    }, randomDelay);
   };
 
   useEffect(() => {
