@@ -704,7 +704,7 @@ export function IDSComparisonTable() {
     <div className="w-full space-y-6">
       
       {/* Educational Banner: IDS vs IPS vs IRS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-950 via-[#030914] to-slate-950 border border-slate-900 shadow-xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 rounded-2xl bg-linear-to-r from-slate-950 via-[#030914] to-slate-950 border border-slate-900 shadow-xl">
         <div className="flex items-start gap-3 p-3 rounded-xl bg-slate-900/30 border border-blue-500/10">
           <div className="p-2 rounded-lg bg-blue-500/10 text-blue-400 mt-0.5">
             <Shield className="h-4 w-4" />
@@ -746,7 +746,7 @@ export function IDSComparisonTable() {
       </div>
 
       {/* Performance Benchmark Highlights Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-2xl bg-gradient-to-r from-slate-950 via-[#030c1e] to-slate-950 border border-cyan-500/20 shadow-xl">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-2xl bg-linear-to-r from-slate-950 via-[#030c1e] to-slate-950 border border-cyan-500/20 shadow-xl">
         <div className="p-3.5 rounded-xl bg-slate-900/40 border border-cyan-500/15">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
@@ -896,46 +896,46 @@ export function IDSComparisonTable() {
       <Table containerClassName="border border-slate-900 shadow-2xl rounded-2xl overflow-hidden">
         <TableHeader>
           <TableRow className="bg-slate-950/70 hover:bg-transparent border-b border-slate-900">
-            <TableHead className="w-[200px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('name')}>
+            <TableHead className="w-50 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('name')}>
               Platform Name <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
             </TableHead>
 
             {viewMode === 'capabilities' ? (
               <>
-                <TableHead className="w-[180px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('irs')}>
+                <TableHead className="w-45 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('irs')}>
                   System Class <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
-                <TableHead className="w-[170px] select-none font-bold">
+                <TableHead className="w-42.5 select-none font-bold">
                   Scope
                 </TableHead>
                 <TableHead className="cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold">
                   Automated Response & Remediation (IRS)
                 </TableHead>
-                <TableHead className="w-[140px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('isFree')}>
+                <TableHead className="w-35 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('isFree')}>
                   Price <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
               </>
             ) : (
               <>
-                <TableHead className="w-[140px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('mttd')}>
+                <TableHead className="w-35 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('mttd')}>
                   MTTD (Detect) <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
-                <TableHead className="w-[170px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('mttr')}>
+                <TableHead className="w-42.5 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('mttr')}>
                   MTTR (Remediate) <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
-                <TableHead className="w-[130px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('falsePositiveRate')}>
+                <TableHead className="w-32.5 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('falsePositiveRate')}>
                   False Positives <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
-                <TableHead className="w-[150px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('throughput')}>
+                <TableHead className="w-37.5 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('throughput')}>
                   Throughput / Capacity <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
-                <TableHead className="w-[140px] cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('accuracyF1')}>
+                <TableHead className="w-35 cursor-pointer hover:text-cyan-400 transition-colors select-none font-bold" onClick={() => handleSort('accuracyF1')}>
                   Accuracy / F1 <ArrowUpDown className="inline-block ml-1 h-3.5 w-3.5" />
                 </TableHead>
               </>
             )}
 
-            <TableHead className="w-[50px]"></TableHead>
+            <TableHead className="w-12.5"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -1094,7 +1094,7 @@ export function IDSComparisonTable() {
                             <span className={`font-mono text-xs font-bold ${isAegis ? 'text-cyan-400' : 'text-slate-200'}`}>
                               {p.accuracyF1}
                             </span>
-                            <span className="text-[10px] text-slate-500 truncate max-w-[120px]" title={p.overhead}>
+                            <span className="text-[10px] text-slate-500 truncate max-w-30" title={p.overhead}>
                               {p.overhead}
                             </span>
                           </div>
@@ -1165,7 +1165,7 @@ export function IDSComparisonTable() {
                                 </div>
                                 <div className="flex justify-between text-xs">
                                   <span className="text-slate-400">Supported Platforms:</span>
-                                  <span className="text-slate-200 text-right max-w-[150px] truncate" title={p.platforms.join(', ')}>
+                                  <span className="text-slate-200 text-right max-w-37.5 truncate" title={p.platforms.join(', ')}>
                                     {p.platforms.join(', ')}
                                   </span>
                                 </div>
@@ -1288,3 +1288,4 @@ export function IDSComparisonTable() {
     </div>
   );
 }
+
