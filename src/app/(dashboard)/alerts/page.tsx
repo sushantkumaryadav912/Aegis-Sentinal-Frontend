@@ -22,9 +22,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { RiskBadge, SeverityBadge, StatusBadge } from '@/components/alerts/badges';
+import { LogClassifierArea } from '@/components/alerts/LogClassifierArea';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { TableSkeleton } from '@/components/layout/skeletons';
+import { AlertsSkeleton, TableSkeleton } from '@/components/layout/skeletons';
 import { EmptyState } from '@/components/layout/empty-state';
 import { 
   AlertTriangle, 
@@ -46,6 +47,7 @@ import {
   Search,
   Filter,
   Sparkles,
+  Play,
   Server,
   Terminal,
   ExternalLink,
@@ -62,6 +64,7 @@ export default function AlertsPage() {
   const [statusFilter, setStatusFilter] = useState<AlertStatus | 'all'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'detections' | 'architecture' | 'helios' | 'yaml'>('detections');
+  const [activeTab, setActiveTab] = useState<'detections' | 'classifier' | 'architecture' | 'helios' | 'yaml'>('detections');
 
   // Helios Catalogue Filters
   const [domainFilter, setDomainFilter] = useState<HeliosCatalogueDomainKey | 'all'>('all');
@@ -132,13 +135,8 @@ export default function AlertsPage() {
     document.body.removeChild(element);
   };
 
-  if (isLoading && !alertsData) {
-    return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 bg-slate-800 animate-pulse rounded" />
-        <TableSkeleton rows={10} />
-      </div>
-    );
+  if (isLoading) {
+    return <AlertsSkeleton />;
   }
 
   const moduleColors: Record<string, string> = {
@@ -216,6 +214,16 @@ export default function AlertsPage() {
             <Activity size={14} /> Incident Feed
           </button>
           <button
+            onClick={() => setActiveTab('classifier')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 ${
+              activeTab === 'classifier'
+                ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                : 'bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+          >
+            <Sparkles size={14} className={activeTab === 'classifier' ? 'text-slate-950' : 'text-amber-400'} /> AI Log Classifier
+          </button>
+          <button
             onClick={() => setActiveTab('architecture')}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 ${
               activeTab === 'architecture'
@@ -251,6 +259,29 @@ export default function AlertsPage() {
       {/* View Tab 1: Incident Feed & Detections Table */}
       {activeTab === 'detections' && (
         <div className="space-y-6">
+          {/* Quick-Launch Classifier Banner */}
+          <div className="bg-linear-to-r from-amber-500/10 via-slate-950 to-cyan-500/10 border border-amber-500/20 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <div className="h-9 w-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                <Sparkles size={18} />
+              </div>
+              <div className="space-y-0.5">
+                <div className="text-xs font-bold text-slate-200 font-mono">
+                  Test Neural Log Classifier &amp; Multi-Model Benchmarks
+                </div>
+                <div className="text-[11px] text-slate-400 font-light">
+                  Upload raw log bundles or paste telemetry to evaluate against 184 SIGMA rules and Helios neural models (Isolation Forest, DeepLog, LogFormer, UEBA).
+                </div>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => setActiveTab('classifier')}
+              className="h-8 text-xs font-mono font-bold bg-amber-400 text-slate-950 hover:bg-amber-300 shrink-0 shadow-md shadow-amber-400/20"
+            >
+              <Play size={12} className="mr-1.5 fill-slate-950" /> Test Classifier
+            </Button>
+          </div>
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Input
@@ -399,6 +430,13 @@ export default function AlertsPage() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* View Tab: AI Log Classifier & Anomaly Detector */}
+      {activeTab === 'classifier' && (
+        <div className="space-y-6 animate-fade-in">
+          <LogClassifierArea onNavigateToFeed={() => setActiveTab('detections')} />
         </div>
       )}
 

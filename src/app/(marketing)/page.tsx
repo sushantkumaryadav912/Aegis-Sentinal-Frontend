@@ -38,7 +38,10 @@ export default function MarketingHome() {
           <AnimatedContainer animation="fade-up" delay={0.2}>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold text-slate-100 tracking-tight mb-8 leading-[1.1] max-w-5xl mx-auto">
               Autonomous Cloud Incident <br />
-              <span className="text-transparent bg-clip -text bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500">
+              <span 
+                className="bg-linear-to-r from-cyan-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent inline-block"
+                style={{ WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
+              >
                 Detection & Response
               </span>
             </h1>

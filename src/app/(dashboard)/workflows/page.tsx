@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { TableSkeleton } from '@/components/layout/skeletons';
+import { WorkflowsSkeleton, TableSkeleton } from '@/components/layout/skeletons';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { 
@@ -166,13 +166,8 @@ export default function WorkflowsPage() {
     }, 1200);
   };
 
-  if (isLoading && !workflowsData) {
-    return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 bg-slate-800 animate-pulse rounded" />
-        <TableSkeleton rows={10} />
-      </div>
-    );
+  if (isLoading) {
+    return <WorkflowsSkeleton />;
   }
 
   return (

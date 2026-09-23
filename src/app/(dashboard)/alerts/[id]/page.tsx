@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RiskBadge, SeverityBadge, StatusBadge } from '@/components/alerts/badges';
 import { Skeleton } from '@/components/ui/skeleton';
+import { AlertDetailSkeleton } from '@/components/layout/skeletons';
 import {
   Dialog,
   DialogContent,
@@ -165,14 +166,8 @@ export default function AlertDetailPage() {
     }
   };
 
-  if ((isAlertLoading && !alertData) || (isWorkflowsLoading && !workflowsData)) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-64" />
-        <Skeleton className="h-48" />
-      </div>
-    );
+  if (isAlertLoading || isWorkflowsLoading) {
+    return <AlertDetailSkeleton />;
   }
 
   if (isAlertError) {

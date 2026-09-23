@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/table';
 import { RiskBadge } from '@/components/alerts/badges';
 import { Input } from '@/components/ui/input';
-import { TableSkeleton } from '@/components/layout/skeletons';
+import { LogsSkeleton, TableSkeleton } from '@/components/layout/skeletons';
 import { EmptyState } from '@/components/layout/empty-state';
 import { Button } from '@/components/ui/button';
 import { 
@@ -92,13 +92,8 @@ export default function LogsPage() {
     setTimeout(() => setIsCopied(false), 2000);
   };
 
-  if (isLoading && !logsData) {
-    return (
-      <div className="space-y-6">
-        <div className="h-10 w-48 bg-slate-800 animate-pulse rounded" />
-        <TableSkeleton rows={10} />
-      </div>
-    );
+  if (isLoading) {
+    return <LogsSkeleton />;
   }
 
   return (

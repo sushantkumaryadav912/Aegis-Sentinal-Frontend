@@ -18,7 +18,7 @@ import {
   Globe 
 } from 'lucide-react';
 import { AlertCard } from '@/components/alerts/alert-card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { OverviewSkeleton } from '@/components/layout/skeletons';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { MOCK_ALERTS, MOCK_DASHBOARD_METRICS, MOCK_RISK_DISTRIBUTION } from '@/lib/mockData';
@@ -36,17 +36,8 @@ export default function OverviewPage() {
     (riskDistribution.medium ?? 0) +
     (riskDistribution.high ?? 0);
 
-  if (isLoading && !data) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-12 w-64" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl" />
-          ))}
-        </div>
-      </div>
-    );
+  if (isLoading) {
+    return <OverviewSkeleton />;
   }
 
   return (
