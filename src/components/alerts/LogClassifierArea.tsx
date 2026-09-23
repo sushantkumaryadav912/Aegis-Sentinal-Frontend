@@ -692,7 +692,6 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
       setResult(computedResult);
       setIsAnalyzing(false);
       setAnalysisStep(0);
-    }, 1100);
     }, randomDurationMs);
   };
 
@@ -938,7 +937,6 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
                 {isAnalyzing ? (
                   <span className="flex items-center gap-2">
                     <RefreshCw size={14} className="animate-spin" />
-                    Running Neural Inference...
                     Analyzing ({liveElapsedSec}s)...
                   </span>
                 ) : (
@@ -956,12 +954,10 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
         <div className="lg:col-span-5 space-y-4">
           {/* Analysis Stage Stepper (during analysis) */}
           {isAnalyzing && (
-            <div className="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-6 backdrop-blur-md space-y-5 animate-pulse">
             <div className="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-6 backdrop-blur-md space-y-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-2">
                   <RefreshCw size={14} className="animate-spin text-cyan-400" />
-                  Neural Classifier Executing
                   Neural Classifier Running
                 </span>
                 <span className="text-[10px] font-mono text-slate-500">Pipeline: {selectedPipeline}</span>
@@ -990,53 +986,41 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
 
               <div className="space-y-3 font-mono text-xs">
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
-                  analysisStep >= 1 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300' : 'border-slate-900 text-slate-600'
                   analysisStep >= 1 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
-                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
                   <span className={`h-2 w-2 rounded-full ${analysisStep >= 1 ? 'bg-cyan-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>1. Ingestion &amp; Schema Normalization</span>
-                    <span className="text-[10px] text-slate-500">0.3 ms</span>
                     <span className="text-[10px] text-slate-500">RFC-5424 / JSON</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
-                  analysisStep >= 2 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300' : 'border-slate-900 text-slate-600'
                   analysisStep >= 2 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
-                  <span className="h-2 w-2 rounded-full bg-cyan-400" />
                   <span className={`h-2 w-2 rounded-full ${analysisStep >= 2 ? 'bg-cyan-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>2. Tokenization &amp; Feature Embeddings</span>
-                    <span className="text-[10px] text-slate-500">0.7 ms</span>
                     <span className="text-[10px] text-slate-500">128-dim vectors</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
-                  analysisStep >= 3 ? 'border-purple-500/40 bg-purple-950/20 text-purple-300' : 'border-slate-900 text-slate-600'
                   analysisStep >= 3 ? 'border-purple-500/40 bg-purple-950/20 text-purple-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
-                  <span className="h-2 w-2 rounded-full bg-purple-400" />
                   <span className={`h-2 w-2 rounded-full ${analysisStep >= 3 ? 'bg-purple-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>3. Multi-Model Parallel Inference</span>
-                    <span className="text-[10px] text-slate-500">11.2 ms</span>
                     <span className="text-[10px] text-slate-500">LSTM + Transformer</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
-                  analysisStep >= 4 ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300' : 'border-slate-900 text-slate-600'
                   analysisStep >= 4 ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
-                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
                   <span className={`h-2 w-2 rounded-full ${analysisStep >= 4 ? 'bg-emerald-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>4. Score Fusion &amp; 184 SIGMA Evaluation</span>
-                    <span className="text-[10px] text-slate-500">1.8 ms</span>
                     <span className="text-[10px] text-slate-500">Consensus match</span>
                   </div>
                 </div>
@@ -1093,9 +1077,6 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
                     {result.verdict === 'BENIGN' && <ShieldCheck size={14} />}
                     VERDICT: {result.verdict}
                   </span>
-                  <div className="text-right">
-                    <span className="text-[10px] font-mono uppercase text-slate-400">Confidence</span>
-                    <div className="text-sm font-black font-mono text-slate-100">{result.confidencePercent}%</div>
                   <div className="flex items-center gap-3">
                     <span className="text-[10px] font-mono text-cyan-300 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded">
                       Analyzed in {analysisDurationSec}s
