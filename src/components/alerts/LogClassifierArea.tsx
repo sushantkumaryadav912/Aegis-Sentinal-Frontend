@@ -230,6 +230,10 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
   const [result, setResult] = useState<PipelineExecutionResult | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
   const [pushedToFeed, setPushedToFeed] = useState<boolean>(false);
+  const [analysisDurationSec, setAnalysisDurationSec] = useState<number>(0);
+  const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [liveElapsedSec, setLiveElapsedSec] = useState<number>(0);
+  const [currentStageMessage, setCurrentStageMessage] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePresetSelect = (preset: SampleLogPreset) => {
@@ -273,23 +277,55 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
   const handleAnalyze = () => {
     if (!logText.trim()) return;
 
+    // Pick a random time strictly between 5 and 15 seconds (5000ms to 15000ms)
+    const randomDurationMs = Math.floor(Math.random() * (15000 - 5000 + 1)) + 5000;
+    const durationSeconds = (randomDurationMs / 1000).toFixed(1);
+
     setIsAnalyzing(true);
     setAnalysisStep(1);
     setResult(null);
     setPushedToFeed(false);
+    setProgressPercent(0);
+    setLiveElapsedSec(0);
+    setCurrentStageMessage('Step 1/4: Ingesting & normalizing telemetry schema...');
 
     // Multi-stage analysis animation simulating neural pipeline
     setTimeout(() => {
       setAnalysisStep(2);
     }, 250);
+    const startTime = Date.now();
 
     setTimeout(() => {
       setAnalysisStep(3);
     }, 550);
+    const ticker = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(99, Math.round((elapsed / randomDurationMs) * 100));
+      setProgressPercent(progress);
+      setLiveElapsedSec(parseFloat((elapsed / 1000).toFixed(1)));
+
+      if (progress < 25) {
+        setAnalysisStep(1);
+        setCurrentStageMessage('Step 1/4: Ingesting & normalizing telemetry schema...');
+      } else if (progress < 50) {
+        setAnalysisStep(2);
+        setCurrentStageMessage('Step 2/4: Vectorizing tokens & generating contextual embeddings...');
+      } else if (progress < 80) {
+        setAnalysisStep(3);
+        setCurrentStageMessage('Step 3/4: Multi-model parallel inference across Helios workers...');
+      } else {
+        setAnalysisStep(4);
+        setCurrentStageMessage('Step 4/4: Synthesizing score fusion & evaluating 184 SIGMA rules...');
+      }
+    }, 100);
 
     setTimeout(() => {
       setAnalysisStep(4);
     }, 850);
+      clearInterval(ticker);
+      setProgressPercent(100);
+      setLiveElapsedSec(parseFloat(durationSeconds));
+      setAnalysisDurationSec(parseFloat(durationSeconds));
 
     setTimeout(() => {
       // Determine classification outcome based on content heuristics or active preset
@@ -657,6 +693,7 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
       setIsAnalyzing(false);
       setAnalysisStep(0);
     }, 1100);
+    }, randomDurationMs);
   };
 
   const handlePushToIncidentStream = () => {
@@ -902,6 +939,7 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
                   <span className="flex items-center gap-2">
                     <RefreshCw size={14} className="animate-spin" />
                     Running Neural Inference...
+                    Analyzing ({liveElapsedSec}s)...
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
@@ -919,52 +957,87 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
           {/* Analysis Stage Stepper (during analysis) */}
           {isAnalyzing && (
             <div className="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-6 backdrop-blur-md space-y-5 animate-pulse">
+            <div className="bg-slate-950/80 border border-cyan-500/30 rounded-2xl p-6 backdrop-blur-md space-y-5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-2">
                   <RefreshCw size={14} className="animate-spin text-cyan-400" />
                   Neural Classifier Executing
+                  Neural Classifier Running
                 </span>
                 <span className="text-[10px] font-mono text-slate-500">Pipeline: {selectedPipeline}</span>
+                <span className="text-[10px] font-mono text-cyan-300 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded-full">
+                  {liveElapsedSec}s elapsed
+                </span>
+              </div>
+
+              {/* Progress Bar & Status */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-[11px] font-mono">
+                  <span className="text-slate-300 font-semibold">{currentStageMessage}</span>
+                  <span className="text-cyan-400 font-bold">{progressPercent}%</span>
+                </div>
+                <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-800">
+                  <div
+                    className="h-full bg-linear-to-r from-cyan-400 via-indigo-500 to-purple-500 rounded-full transition-all duration-150 ease-out"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] font-mono text-slate-500 pt-0.5">
+                  <span>Distributed Helios multi-pass inference</span>
+                  <span>Randomized 5s – 15s window</span>
+                </div>
               </div>
 
               <div className="space-y-3 font-mono text-xs">
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
                   analysisStep >= 1 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300' : 'border-slate-900 text-slate-600'
+                  analysisStep >= 1 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
                   <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                  <span className={`h-2 w-2 rounded-full ${analysisStep >= 1 ? 'bg-cyan-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>1. Ingestion &amp; Schema Normalization</span>
                     <span className="text-[10px] text-slate-500">0.3 ms</span>
+                    <span className="text-[10px] text-slate-500">RFC-5424 / JSON</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
                   analysisStep >= 2 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300' : 'border-slate-900 text-slate-600'
+                  analysisStep >= 2 ? 'border-cyan-500/40 bg-cyan-950/20 text-cyan-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
                   <span className="h-2 w-2 rounded-full bg-cyan-400" />
+                  <span className={`h-2 w-2 rounded-full ${analysisStep >= 2 ? 'bg-cyan-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>2. Tokenization &amp; Feature Embeddings</span>
                     <span className="text-[10px] text-slate-500">0.7 ms</span>
+                    <span className="text-[10px] text-slate-500">128-dim vectors</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
                   analysisStep >= 3 ? 'border-purple-500/40 bg-purple-950/20 text-purple-300' : 'border-slate-900 text-slate-600'
+                  analysisStep >= 3 ? 'border-purple-500/40 bg-purple-950/20 text-purple-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
                   <span className="h-2 w-2 rounded-full bg-purple-400" />
+                  <span className={`h-2 w-2 rounded-full ${analysisStep >= 3 ? 'bg-purple-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>3. Multi-Model Parallel Inference</span>
                     <span className="text-[10px] text-slate-500">11.2 ms</span>
+                    <span className="text-[10px] text-slate-500">LSTM + Transformer</span>
                   </div>
                 </div>
 
                 <div className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all ${
                   analysisStep >= 4 ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300' : 'border-slate-900 text-slate-600'
+                  analysisStep >= 4 ? 'border-emerald-500/40 bg-emerald-950/20 text-emerald-300 shadow-xs' : 'border-slate-900 text-slate-600'
                 }`}>
                   <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  <span className={`h-2 w-2 rounded-full ${analysisStep >= 4 ? 'bg-emerald-400 animate-pulse' : 'bg-slate-700'}`} />
                   <div className="flex-1 flex justify-between">
                     <span>4. Score Fusion &amp; 184 SIGMA Evaluation</span>
                     <span className="text-[10px] text-slate-500">1.8 ms</span>
+                    <span className="text-[10px] text-slate-500">Consensus match</span>
                   </div>
                 </div>
               </div>
@@ -1023,6 +1096,14 @@ export function LogClassifierArea({ onAlertGenerated, onNavigateToFeed }: LogCla
                   <div className="text-right">
                     <span className="text-[10px] font-mono uppercase text-slate-400">Confidence</span>
                     <div className="text-sm font-black font-mono text-slate-100">{result.confidencePercent}%</div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-mono text-cyan-300 font-bold bg-cyan-950/60 border border-cyan-500/30 px-2 py-0.5 rounded">
+                      Analyzed in {analysisDurationSec}s
+                    </span>
+                    <div className="text-right">
+                      <span className="text-[10px] font-mono uppercase text-slate-400">Confidence</span>
+                      <div className="text-sm font-black font-mono text-slate-100">{result.confidencePercent}%</div>
+                    </div>
                   </div>
                 </div>
 
