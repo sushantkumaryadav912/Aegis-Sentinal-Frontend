@@ -1,5 +1,6 @@
 import { Alert, AlertStatus, PaginatedResponse, Severity } from '@/lib/types';
-import { apiClient, toPaginatedResponse, unwrapData } from '@/lib/api/client';
+import { getMockPaginatedAlerts, MOCK_ALERTS } from '@/lib/mockData';
+import { simulateNetworkDelay } from './delay';
 
 export type RemediationAction = 'block_ip' | 'quarantine_user' | 'disable_service' | 'manual';
 
@@ -20,49 +21,62 @@ export interface AlertsQueryParams {
   status?: AlertStatus;
 }
 
-function cleanAlertsQuery(params: AlertsQueryParams): Record<string, string | number> {
-  return Object.entries(params).reduce<Record<string, string | number>>((acc, [key, value]) => {
-    if (value === undefined || value === null || value === '') {
-      return acc;
-    }
-
-    acc[key] = value;
-    return acc;
-  }, {});
-}
-
 export async function getAlerts(params: AlertsQueryParams = {}): Promise<PaginatedResponse<Alert>> {
-  const page = params.page ?? 1;
-  const limit = params.limit ?? 20;
-  const rawResponse = await apiClient.request<unknown>('/alerts', {
-    query: cleanAlertsQuery({ ...params, page, limit }),
-  });
-
-  return toPaginatedResponse<Alert>(rawResponse, { page, limit });
+  await simulateNetworkDelay(400, 850);
+  return getMockPaginatedAlerts(params);
 }
 
 export async function getAlertById(id: string): Promise<Alert> {
-  const rawResponse = await apiClient.request<unknown>(`/alerts/${id}`);
-  return unwrapData<Alert>(rawResponse);
+  await simulateNetworkDelay(300, 700);
+  const found = MOCK_ALERTS.find((a) => a.id.toLowerCase() === id.toLowerCase());
+  if (found) {
+    return { ...found };
+  }
+
+  // Fallback realistic AI anomaly alert if ID not found
+  return {
+    id,
+    title: `Telemetry Alert ${id}`,
+    description: 'Anomalous security telemetry event flagged by Aegis Sentinel Real-Time Detection Engine.',
+    severity: 'high',
+    risk_score: 84,
+    status: 'open',
+    cloud_provider: 'aws',
+    resource_type: 'AWS::Security::Incident',
+    resource_id: `res-${id.toLowerCase()}`,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    retry_attempts: 0,
+    affected_services: ['Sentinel Core', 'CloudTrail'],
+    recommendation: 'Correlate with Helios Detection Matrix and initiate Forge SOAR containment playbook.',
+  };
 }
 
 export async function approveAlert(id: string, payload: ApproveAlertPayload): Promise<Alert> {
-  const rawResponse = await apiClient.request<unknown>(`/alerts/${id}/approve`, {
-    method: 'POST',
-    body: payload,
-  });
+  await simulateNetworkDelay(500, 950);
+  const alert = await getAlertById(id);
+  alert.status = 'investigating';
+  alert.updated_at = new Date().toISOString();
 
-  return unwrapData<Alert>(rawResponse);
+  const idx = MOCK_ALERTS.findIndex((a) => a.id.toLowerCase() === id.toLowerCase());
+  if (idx !== -1) {
+    MOCK_ALERTS[idx] = { ...alert };
+  }
+  return alert;
 }
 
 export async function markAlertFalsePositive(
   id: string,
   payload: MarkFalsePositivePayload
 ): Promise<Alert> {
-  const rawResponse = await apiClient.request<unknown>(`/alerts/${id}/false-positive`, {
-    method: 'POST',
-    body: payload,
-  });
+  await simulateNetworkDelay(450, 900);
+  const alert = await getAlertById(id);
+  alert.status = 'false_positive';
+  alert.updated_at = new Date().toISOString();
 
-  return unwrapData<Alert>(rawResponse);
+  const idx = MOCK_ALERTS.findIndex((a) => a.id.toLowerCase() === id.toLowerCase());
+  if (idx !== -1) {
+    MOCK_ALERTS[idx] = { ...alert };
+  }
+  return alert;
 }

@@ -5,6 +5,22 @@ import { WorkflowsQueryParams } from '@/lib/api/workflows';
 
 export const MOCK_ALERTS: Alert[] = [
   {
+    id: 'ALT-2026-000',
+    title: 'Anomalous 03:15 Credential Login & Mass File Access',
+    description: 'User logged in at 03:15 UTC from an unrecognized device fingerprint and initiated rapid bulk file read operations across production S3 storage. Routed via Helios Capability Router: DeepLog (0.82), LogFormer (0.88), UEBA (0.96), and Isolation Forest (0.79).',
+    severity: 'critical',
+    risk_score: 89,
+    status: 'open',
+    cloud_provider: 'aws',
+    resource_type: 'AWS::IAM::User',
+    resource_id: 'iam-user-svc-deployment',
+    created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    updated_at: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
+    retry_attempts: 1,
+    affected_services: ['IAM', 'S3', 'CloudTrail', 'GuardDuty'],
+    recommendation: 'Score Fusion: 0.20*IF(0.79) + 0.30*DeepLog(0.82) + 0.20*LogFormer(0.88) + 0.30*UEBA(0.96) = 0.89. Oracle triage completed; trigger Forge SOAR Playbook WF-501 (Auto-Quarantine & Session Invalidation).',
+  },
+  {
     id: 'ALT-2026-001',
     title: 'Unrestricted S3 Bucket Public Access Enabled',
     description: 'CloudTrail event detected S3 PutBucketPolicy API call granting wildcard principal s3:GetObject permission on production secrets storage.',
@@ -135,6 +151,8 @@ export const MOCK_ALERTS: Alert[] = [
 ];
 
 const LOG_EVENT_CATALOG = [
+  { type: 'anomalous_0315_login', user: 'iam-user-svc-deployment', action: 'ConsoleLogin', dest: 'signin.aws.amazon.com', res: 'arn:aws:iam::123456789012:user/iam-user-svc-deployment', risk: 89, details: '03:15 UTC anomalous login from new device fingerprint in St. Petersburg proxy pool. UEBA risk score 0.96.' },
+  { type: 'mass_s3_file_access', user: 'iam-user-svc-deployment', action: 'GetObject', dest: 's3.us-east-1.amazonaws.com', res: 'arn:aws:s3:::prod-customer-backups/financial-pii/*', risk: 94, details: 'Rapid sequential download of 14,200 objects detected by DeepLog v2 sequence model (score: 0.82).' },
   { type: 's3_policy_modification', user: 'devsecops-bot@corp', action: 'PutBucketPolicy', dest: 's3.us-east-1.amazonaws.com', res: 'arn:aws:s3:::prod-secrets-vault-01', risk: 96, details: 'Modified S3 bucket policy allowing wildcard principal s3:GetObject access.' },
   { type: 'iam_assume_role', user: 'admin-console-user', action: 'AssumeRole', dest: 'sts.us-west-2.amazonaws.com', res: 'arn:aws:iam::123456789012:role/DevSecOpsRole', risk: 92, details: 'Cross-account role assumption requested without MFA requirement.' },
   { type: 'gke_pod_exec', user: 'system:serviceaccount:kube-system', action: 'container_escape_attempt', dest: 'gke-control-plane.internal', res: 'gke-cluster-prod/kube-system/sec-runner-90a', risk: 88, details: 'Kernel SYS_ADMIN capability invoked inside container namespace.' },
